@@ -10,10 +10,23 @@ package
 		private const MAX_WIDTH:int = 1024;
 		private const MAX_HEIGHT:int = 1024;
 		
+		private var _forXMLArray:Array = new Array();					//xml에 쓸 데이터 배열
+		
 		public function Packer()
 		{
+		}		
+
+
+		public function get forXMLArray():Array
+		{
+			return _forXMLArray;
 		}
-		
+
+		public function set forXMLArray(value:Array):void
+		{
+			_forXMLArray = value;
+		}
+
 		/**
 		 * 
 		 * @param imageArray 이미지가 들어있는 Array를 받아옴
@@ -29,7 +42,7 @@ package
 			
 			var bm:Bitmap;
 			var point:Point = new Point(0,0);
-			var mult:uint = 0xFF; // 50% 
+			var mult:uint = 0xFF;					 // 알파값 조정 없이 100%로 이용 
 			
 			var newLine:Boolean = true;
 			var tempHeight:int;
@@ -39,45 +52,55 @@ package
 			
 			for(var i:int = 0; i<imageArray.length; ++i)
 			{				
-				bm = new Bitmap(imageArray[i]);					
+				bm = new Bitmap(imageArray[i].bitmapData);					
 				
 				if(newLine)
 				{
-					tempHeight = imageArray[i].height; 
+					tempHeight = imageArray[i].bitmapData.height; 
 					newLine = false;
 				}
 				
 				if(i > 0)
 				{
 					//도화지의 가로 길이를 벗어나지 않으면
-					if(point.x + imageArray[i-1].width + imageArray[i].width < MAX_WIDTH)
+					if(point.x + imageArray[i-1].bitmapData.width + imageArray[i].bitmapData.width < MAX_WIDTH)
 					{
-						point.x += imageArray[i-1].width;
+						point.x += imageArray[i-1].bitmapData.width;
 					}
 					
 					else
 					{
-						//point.y += findMax(imageArray);
 						newLine = true;
 						point.y += tempHeight;
 						point.x = 0;
 					}
 					
 					//도화지의 세로 길이를 벗어나면 종료
-					if(point.y + imageArray[i].height > MAX_HEIGHT)
+					if(point.y + imageArray[i].bitmapData.height > MAX_HEIGHT)
 					{
+						trace(i + "개의 이미지 패킹 완료");
+						trace(imageArray.length - i + "개의 이미지는 패킹되지 않았음.");
 						break;
 					}
-					
-					
-					trace(i + point);
-				}
-				else
-				{
-					trace(i + point);						
+					trace(i + " " + point + " width = " + imageArray[i].bitmapData.width + " height = " + imageArray[i].bitmapData.height);
 				}
 				
+				else
+				{
+					trace(i + " " + point + " width = " + imageArray[i].bitmapData.width + " height = " + imageArray[i].bitmapData.height);						
+				}
+				
+				//큰 도화지에 하나씩 붙여넣음
 				canvas.merge(bm.bitmapData, bm.bitmapData.rect, point, mult, mult, mult, mult);
+				
+				//xml로 쓸 데이터를 array에 저장
+				var imageData:ImageData = new ImageData();
+				imageData.name = imageArray[i].name;
+				imageData.rect.x = point.x;
+				imageData.rect.y = point.y;
+				imageData.rect.width = imageArray[i].bitmapData.width;
+				imageData.rect.height = imageArray[i].bitmapData.height;
+				_forXMLArray.push(imageData);								
 				
 			}
 			
@@ -94,8 +117,9 @@ package
 		 */
 		public function compareHeight(a, b):int
 		{
-			var aHeight:int = a.height;
-			var bHeight:int = b.height;
+			var aHeight:int = a.bitmapData.height;
+			var bHeight:int = b.bitmapData.height;
+			
 			
 			if (bHeight < aHeight) 
 			{ 

@@ -1,6 +1,5 @@
 package
 {
-	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.Loader;
 	import flash.display.LoaderInfo;
@@ -9,30 +8,21 @@ package
 
 	public class ResourceLoader
 	{
-		private var _completeFunc:Function;
-		
-		private var _bitmapData:BitmapData;
-	
-		
-		private var _loaderArray:Array = new Array();
-		private var _bitmapDataArray:Array = new Array();
+		private var _completeFunc:Function;		
 		
 		
-		private var _urlArray:Array = new Array();
+		private var _urlArray:Array = new Array();					//파일명이 담긴 배열
+		private var _imageDataArray:Array = new Array();			//ImageData가 담긴 배열 
 		
 		
-		private var _loader:Loader;// = new Loader();
-		
-		
-	
-		public function get bitmapDataArray():Array
+		public function get imageDataArray():Array
 		{
-			return _bitmapDataArray;
+			return _imageDataArray;
 		}
 		
-		public function set bitmapDataArray(value:Array):void
+		public function set imageDataArray(value:Array):void
 		{
-			_bitmapDataArray = value;
+			_imageDataArray = value;
 		}
 		
 		public function get urlArray():Array
@@ -51,11 +41,9 @@ package
 		
 		public function ResourceLoader(cFunc:Function)
 		{
-
 			_completeFunc = cFunc;
-			buildURLArray();
-			buildArrLoader();
-			
+			buildURLArray();			
+			buildLoader();
 		}
 		
 		
@@ -67,13 +55,21 @@ package
 		public function onLoaderComplete(event:Event):void
 		{
 			var loaderInfo:LoaderInfo = LoaderInfo(event.target);
-			_bitmapData = new BitmapData(loaderInfo.width, loaderInfo.height);			
-			_bitmapData.draw(loaderInfo.loader);
 			
-			_bitmapDataArray.push(_bitmapData);
+			var name:String = loaderInfo.url;
+			name = name.substring(5, name.length - 4);			
+			
+			var imageData:ImageData = new ImageData();
+			imageData.name = name;
+			
+			var _bitmapData:BitmapData = new BitmapData(loaderInfo.width, loaderInfo.height);			
+			_bitmapData.draw(loaderInfo.loader);
+			imageData.bitmapData = _bitmapData;
+			
+			_imageDataArray.push(imageData);
+			
 			_completeFunc();
 			
-			//_loader.removeEventListener(Event.COMPLETE, onLoaderComplete);
 		}
 		
 		
@@ -81,16 +77,15 @@ package
 		 * 각각의 리소스를 로드하고 이벤트를 붙여주는 메소드 
 		 * 
 		 */
-		private function buildArrLoader():void
+		private function buildLoader():void
 		{
 			for(var i:int = 0; i<_urlArray.length; ++i)
 			{
-				_loader = new Loader();
+				var _loader:Loader = new Loader();
 				
 				_loader.load(new URLRequest(_urlArray[i]));
-				_loader.contentLoaderInfo.addEventListener(Event.COMPLETE, onLoaderComplete);
+				_loader.contentLoaderInfo.addEventListener(Event.COMPLETE, onLoaderComplete);				
 				
-				_loaderArray.push(_loader);
 			}			
 			
 		}
@@ -126,8 +121,7 @@ package
 			_urlArray.push("k.png");
 			_urlArray.push("l.png");
 			_urlArray.push("m.png");
-
-//			
+		
 		}
 		
 	}
