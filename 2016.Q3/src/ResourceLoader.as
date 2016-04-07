@@ -107,9 +107,26 @@ package
 			_urlArray.push("2.png");
 			_urlArray.push("3.png");
 			_urlArray.push("4.png");
-//			_urlArray.push("stz.jpg");
-//			_urlArray.push("close.png");
-//			_urlArray.push("minimize.png");
+			_urlArray.push("5.png");
+			_urlArray.push("6.png");
+			_urlArray.push("7.png");
+			_urlArray.push("8.png");
+			_urlArray.push("9.png");
+			
+			_urlArray.push("a.png");
+			_urlArray.push("b.png");
+			_urlArray.push("c.png");
+			_urlArray.push("d.png");
+			_urlArray.push("e.png");
+			_urlArray.push("f.png");
+			_urlArray.push("g.png");
+			_urlArray.push("h.png");
+			_urlArray.push("i.png");
+			_urlArray.push("j.png");
+			_urlArray.push("k.png");
+			_urlArray.push("l.png");
+			_urlArray.push("m.png");
+
 //			
 		}
 		

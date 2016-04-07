@@ -1,11 +1,7 @@
 package
 {
 	import flash.display.Bitmap;
-	import flash.display.BitmapData;
 	import flash.display.Sprite;
-	import flash.events.Event;
-	import flash.geom.Point;
-	import flash.geom.Rectangle;
 	
 	[SWF(width = "1024", height = "1024")]
 	public class Main extends Sprite
@@ -32,8 +28,7 @@ package
 			
 			//모두 로딩이 됬다면
 			if(bitmapDataArray.length == _loadResource.urlArray.length)
-			{			
-
+			{	
 				var bitmap:Bitmap = packer.mergeImages(bitmapDataArray);
 				addChild(bitmap);
 			}
