@@ -9,14 +9,8 @@ package
 
 	public class ResourceLoader
 	{
-		
-	
-
-		
-
 		private var _completeFunc:Function;
 		
-		//private var _loader:Loader = new Loader();
 		private var _bitmapData:BitmapData;
 	
 		
@@ -27,7 +21,7 @@ package
 		private var _urlArray:Array = new Array();
 		
 		
-		
+		private var _loader:Loader;// = new Loader();
 		
 		
 	
@@ -68,7 +62,7 @@ package
 		/**
 		 * 
 		 * @param event 로딩이 끝나면 이벤트를 받아옴
-		 * BitmapData에 로딩된 타겟을 그리고 배열에 푸쉬하는 콜백 메소드
+		 * BitmapData에 로딩된 타겟을 그리고 배열에 푸쉬하는 리스너함수
 		 */
 		public function onLoaderComplete(event:Event):void
 		{
@@ -78,6 +72,8 @@ package
 			
 			_bitmapDataArray.push(_bitmapData);
 			_completeFunc();
+			
+			//_loader.removeEventListener(Event.COMPLETE, onLoaderComplete);
 		}
 		
 		
@@ -89,7 +85,7 @@ package
 		{
 			for(var i:int = 0; i<_urlArray.length; ++i)
 			{
-				var _loader:Loader = new Loader();
+				_loader = new Loader();
 				
 				_loader.load(new URLRequest(_urlArray[i]));
 				_loader.contentLoaderInfo.addEventListener(Event.COMPLETE, onLoaderComplete);
@@ -106,13 +102,15 @@ package
 		 */
 		private function buildURLArray():void
 		{
-			_urlArray.push("minimize.png");
-			_urlArray.push("close.png");
-			_urlArray.push("stz.jpg");
+			_urlArray.push("0.png");
+			_urlArray.push("1.png");
+			_urlArray.push("2.png");
+			_urlArray.push("3.png");
+			_urlArray.push("4.png");
 //			_urlArray.push("stz.jpg");
 //			_urlArray.push("close.png");
 //			_urlArray.push("minimize.png");
-			
+//			
 		}
 		
 	}
