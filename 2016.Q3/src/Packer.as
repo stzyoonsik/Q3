@@ -29,7 +29,45 @@ package
 
 			
 		
-		
+		/**
+		 * 
+		 * @param imageArray 이미지가 들어있는 Array를 받아옴
+		 * @return 새 Bitmap에 이미지를 넣고 리턴
+		 * 하나의 큰 도화지에 이미지들을 MaxRects 알고리즘을 기반으로 넣어주는 메소드
+		 */
+		public function mergeImageByMaxRects(imageArray:Array):Bitmap
+		{
+			var canvas:BitmapData = new BitmapData(MAX_WIDTH, MAX_HEIGHT, false);
+			var tempRect:Rectangle = new Rectangle(0, 0, MAX_WIDTH, MAX_HEIGHT);
+			canvas.fillRect(tempRect, 0xAAAAAA);
+			
+			
+			var mult:uint = 0xFF;			
+			
+			var maxRect:MaxRectPacker = new MaxRectPacker(MAX_WIDTH, MAX_HEIGHT);
+			
+			imageArray.sort(compareHeightDescending);
+			
+			for(var i:int = 0; i<imageArray.length; ++i)
+			{	
+				var rect:Rectangle = maxRect.quickInsert(imageArray[i].bitmapData.width, imageArray[i].bitmapData.height); 
+				if(rect == null)
+					continue;
+				
+				var point:Point = new Point(rect.x, rect.y);
+				canvas.merge(imageArray[i].bitmapData, imageArray[i].bitmapData.rect, point, mult, mult, mult, mult);
+				
+				var imageData:ImageData = new ImageData();
+				imageData.name = imageArray[i].name;
+				imageData.rect.x = point.x;
+				imageData.rect.y = point.y;
+				imageData.rect.width = imageArray[i].bitmapData.width;
+				imageData.rect.height = imageArray[i].bitmapData.height;
+				_forXMLArray.push(imageData);
+			}
+			trace(imageArray.length + "개의 이미지 중 " + _forXMLArray.length + "개의 이미지 패킹 완료");
+			return new Bitmap(canvas);
+		}
 		
 		
 		
@@ -37,10 +75,9 @@ package
 		 * 
 		 * @param imageArray 이미지가 들어있는 Array를 받아옴
 		 * @return 새 Bitmap에 이미지를 넣고 리턴
-		 * 하나의 큰 도화지에 이미지들을 Height를 기준으로 내림차순으로 넣어주는 메소드
-		 * Shelf 알고리즘
+		 * 하나의 큰 도화지에 이미지들을 Height를 기준으로 내림차순으로 넣어주는 메소드		 * 
 		 */
-		public function mergeImageByShelf(imageArray:Array):Bitmap
+		public function mergeImageByHeight(imageArray:Array):Bitmap
 		{
 			var canvas:BitmapData = new BitmapData(MAX_WIDTH, MAX_HEIGHT, false);
 			var rect:Rectangle = new Rectangle(0, 0, MAX_WIDTH, MAX_HEIGHT);
@@ -55,7 +92,7 @@ package
 			var tempHeight:int;
 			
 			//이미지의 height를 기준으로 내림차순 정렬
-			imageArray.sort(compareHeight);
+			imageArray.sort(compareHeightDescending);
 			
 			
 			for(var i:int = 0; i<imageArray.length; ++i)
@@ -123,7 +160,7 @@ package
 				
 			}
 			
-			trace(_forXMLArray.length + "개의 이미지 패킹 완료");
+			trace(imageArray.length + "개의 이미지 중 " + _forXMLArray.length + "개의 이미지 패킹 완료");
 			return new Bitmap(canvas);
 		}
 		
@@ -135,7 +172,7 @@ package
 		 * @return 내림차순
 		 * 비교함수
 		 */
-		public function compareHeight(a, b):int
+		public function compareHeightDescending(a, b):int
 		{
 			var aHeight:int = a.bitmapData.height;
 			var bHeight:int = b.bitmapData.height;
@@ -146,6 +183,26 @@ package
 				return -1; 
 			} 
 			else if (bHeight > aHeight) 
+			{ 
+				return 1; 
+			} 
+			else 
+			{ 
+				return 0; 
+			} 
+		}
+		
+		public function compareHeightAscending(a, b):int
+		{
+			var aHeight:int = a.bitmapData.height;
+			var bHeight:int = b.bitmapData.height;
+			
+			
+			if (bHeight > aHeight) 
+			{ 
+				return -1; 
+			} 
+			else if (bHeight < aHeight) 
 			{ 
 				return 1; 
 			} 

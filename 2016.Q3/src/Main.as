@@ -42,7 +42,8 @@ package
 			//모두 로딩이 됬다면
 			if(bitmapDataArray.length == _loadResource.urlArray.length)
 			{	
-				var bitmap:Bitmap = _packer.mergeImageByShelf(bitmapDataArray);
+				//var bitmap:Bitmap = _packer.mergeImageByShelf(bitmapDataArray);
+				var bitmap:Bitmap = _packer.mergeImageByMaxRects(bitmapDataArray);
 				addChild(bitmap);
 				
 				saveToPNG(bitmap);	
