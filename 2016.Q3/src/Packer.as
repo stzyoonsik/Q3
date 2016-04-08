@@ -27,13 +27,20 @@ package
 			_forXMLArray = value;
 		}
 
+			
+		
+		
+		
+		
+		
 		/**
 		 * 
 		 * @param imageArray 이미지가 들어있는 Array를 받아옴
 		 * @return 새 Bitmap에 이미지를 넣고 리턴
-		 * 하나의 큰 도화지에 이미지들을 넣어주는 메소드
+		 * 하나의 큰 도화지에 이미지들을 Height를 기준으로 내림차순으로 넣어주는 메소드
+		 * Shelf 알고리즘
 		 */
-		public function mergeImages(imageArray:Array):Bitmap
+		public function mergeImageByShelf(imageArray:Array):Bitmap
 		{
 			var canvas:BitmapData = new BitmapData(MAX_WIDTH, MAX_HEIGHT, false);
 			var rect:Rectangle = new Rectangle(0, 0, MAX_WIDTH, MAX_HEIGHT);
@@ -50,14 +57,26 @@ package
 			//이미지의 height를 기준으로 내림차순 정렬
 			imageArray.sort(compareHeight);
 			
+			
 			for(var i:int = 0; i<imageArray.length; ++i)
 			{				
 				bm = new Bitmap(imageArray[i].bitmapData);					
 				
 				if(newLine)
 				{
-					tempHeight = imageArray[i].bitmapData.height; 
+					if(i == 0)
+					{
+						tempHeight = imageArray[i].bitmapData.height;
+						trace("다음 라인의 height = " + tempHeight, imageArray[i].name);
+					}
+					else
+					{
+						tempHeight = imageArray[i-1].bitmapData.height;
+						trace("다음 라인의 height = " + tempHeight, imageArray[i-1].name);
+					}
+					
 					newLine = false;
+					
 				}
 				
 				if(i > 0)
@@ -104,6 +123,7 @@ package
 				
 			}
 			
+			trace(_forXMLArray.length + "개의 이미지 패킹 완료");
 			return new Bitmap(canvas);
 		}
 		

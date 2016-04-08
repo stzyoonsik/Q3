@@ -8,6 +8,7 @@ package
 
 	public class ResourceLoader
 	{
+		//File.getDirectoryListing() 써라!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		private var _completeFunc:Function;		
 		
 		
