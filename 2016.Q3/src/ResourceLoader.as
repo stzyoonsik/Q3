@@ -15,6 +15,8 @@ package
 		private var _urlArray:Array = new Array();					//파일명이 담긴 배열
 		private var _imageDataArray:Array = new Array();			//ImageData가 담긴 배열 
 		
+	
+		
 		
 		public function get imageDataArray():Array
 		{
@@ -117,18 +119,17 @@ package
 		private function findOnlyImageFile(resourceArray:Array):void
 		{			
 			for(var i:int = 0; i<resourceArray.length; ++i)
-			{
-				
+			{				
 				
 				var url:String = resourceArray[i].url; 
-				var extension:String = url.substr(url.length - 3, url.length);
+				
+				var extension:String = url.substr(url.lastIndexOf(".") + 1, url.length);
 				
 				if(extension == "png" || extension == "jpg")
 				{
 					url = url.substring(5, url.length);	
-					_urlArray.push(url);
+					_urlArray.push(url);					
 					
-					trace(url);
 				}
 			}
 		}

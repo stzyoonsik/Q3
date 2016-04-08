@@ -5,7 +5,6 @@ package
 	import flash.filesystem.File;
 	import flash.filesystem.FileMode;
 	import flash.filesystem.FileStream;
-	import flash.geom.Rectangle;
 	import flash.utils.ByteArray;
 	
 	[SWF(width = "1024", height = "1024")]
@@ -17,9 +16,9 @@ package
 		private var _loadResource:ResourceLoader;
 		private var _packer:Packer = new Packer();
 		
+		private var count:int = 0;
 		
-		private var _pngFile:File = File.documentsDirectory.resolvePath("sprite_sheet.png");
-		private var _xmlFile:File = File.documentsDirectory.resolvePath("sprite_sheet.xml");
+	
 		private var _fileStream:FileStream = new FileStream(); 
 		
 		public function Main()
@@ -34,22 +33,32 @@ package
 		 * 
 		 */
 		public function completeResource():void
-		{			
-			//var bitmapDataArray:Array = _loadResource.bitmapDataArray;			
+		{								
 			var bitmapDataArray:Array = _loadResource.imageDataArray;
 			
 			
 			//모두 로딩이 됬다면
 			if(bitmapDataArray.length == _loadResource.urlArray.length)
 			{	
-				//var bitmap:Bitmap = _packer.mergeImageByShelf(bitmapDataArray);
-				var bitmap:Bitmap = _packer.mergeImageByMaxRects(bitmapDataArray);
-				addChild(bitmap);
-				
-				saveToPNG(bitmap);	
-				
-				var tempArray:Array = _packer.forXMLArray;
-				exportToXML(tempArray);
+				while(_packer.packedImageCount == 0)
+				{
+					var bitmap:Bitmap = _packer.mergeImageByMaxRects(bitmapDataArray);
+					addChild(bitmap);
+									
+					saveToPNG(bitmap);	
+									
+					var tempArray:Array = _packer.forXMLArray;
+					exportToXML(tempArray);
+					
+					if(_packer.unpackedImageArray.length != 0)
+					{
+						trace("추가");
+						count++;
+						bitmapDataArray = _packer.unpackedImageArray;
+						_packer = new Packer();
+					}
+					
+				}
 			}
 		}
 		
@@ -60,6 +69,7 @@ package
 		 */
 		public function saveToPNG(bitmap:Bitmap):void
 		{
+			var _pngFile:File = File.documentsDirectory.resolvePath("sprite_sheet" + count + ".png");
 			var byteArray:ByteArray = PNGEncoder.encode(bitmap.bitmapData);
 			
 			_fileStream.open(_pngFile, FileMode.WRITE);
@@ -74,14 +84,16 @@ package
 		 */
 		public function exportToXML(imageData:Array):void
 		{
+			var _xmlFile:File = File.documentsDirectory.resolvePath("sprite_sheet" + count + ".xml");
+			
 			_fileStream.open(_xmlFile, FileMode.WRITE);
 			_fileStream.writeUTFBytes("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-			_fileStream.writeUTFBytes("<TextureAtlas ImagePath=\"" + "sprite_sheet.png" + "\">\n");
+			_fileStream.writeUTFBytes("<TextureAtlas ImagePath=\"" + "sprite_sheet" + count + ".png" + "\">\n");
 			
 			for(var i:int = 0; i<imageData.length; ++i)
 			{
 				_fileStream.writeUTFBytes("<SubTexture name=\"" + imageData[i].name + "\" x=\"" + imageData[i].rect.x 
-					+ "\" y=\"" + imageData[i].rect.y + "\" width=\"" + imageData[i].rect.width + "\" height=\"" + imageData[i].rect.height + " \"/>\n");
+					+ "\" y=\"" + imageData[i].rect.y + "\" width=\"" + imageData[i].rect.width + "\" height=\"" + imageData[i].rect.height + "\"/>\n");
 			}
 			_fileStream.writeUTFBytes("</TextureAtlas>");
 			_fileStream.close();

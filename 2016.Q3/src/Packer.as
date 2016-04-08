@@ -12,10 +12,34 @@ package
 		
 		private var _forXMLArray:Array = new Array();					//xml에 쓸 데이터 배열
 		
+		private var _unpackedImageArray:Array = new Array();			//패킹되지 못한 이미지 파일들이 담긴 배열
+		
+		private var _packedImageCount:int;
+		
 		public function Packer()
 		{
 		}		
 
+
+		public function get packedImageCount():int
+		{
+			return _packedImageCount;
+		}
+
+		public function set packedImageCount(value:int):void
+		{
+			_packedImageCount = value;
+		}
+
+		public function get unpackedImageArray():Array
+		{
+			return _unpackedImageArray;
+		}
+
+		public function set unpackedImageArray(value:Array):void
+		{
+			_unpackedImageArray = value;
+		}
 
 		public function get forXMLArray():Array
 		{
@@ -46,13 +70,17 @@ package
 			
 			var maxRect:MaxRectPacker = new MaxRectPacker(MAX_WIDTH, MAX_HEIGHT);
 			
-			imageArray.sort(compareHeightDescending);
+			imageArray.sort(compareAreaDescending);
 			
 			for(var i:int = 0; i<imageArray.length; ++i)
 			{	
 				var rect:Rectangle = maxRect.quickInsert(imageArray[i].bitmapData.width, imageArray[i].bitmapData.height); 
+				
 				if(rect == null)
+				{
+					_unpackedImageArray.push(imageArray[i]);
 					continue;
+				}
 				
 				var point:Point = new Point(rect.x, rect.y);
 				canvas.merge(imageArray[i].bitmapData, imageArray[i].bitmapData.rect, point, mult, mult, mult, mult);
@@ -64,8 +92,24 @@ package
 				imageData.rect.width = imageArray[i].bitmapData.width;
 				imageData.rect.height = imageArray[i].bitmapData.height;
 				_forXMLArray.push(imageData);
+				
+				_packedImageCount++;
+			}
+			
+			
+			
+			for(var j:int = 0; j<_forXMLArray.length; ++j)
+			{
+				trace(_forXMLArray[j].name + "\t" +  _forXMLArray[j].rect);
 			}
 			trace(imageArray.length + "개의 이미지 중 " + _forXMLArray.length + "개의 이미지 패킹 완료");
+			
+			for(var k:int = 0; k<_unpackedImageArray.length; ++k)
+			{
+				trace(_unpackedImageArray[k].name + "\t" +  _unpackedImageArray[k].rect);
+			}
+			trace(_unpackedImageArray.length + "개의 이미지 패킹 실패");
+			
 			return new Bitmap(canvas);
 		}
 		
@@ -167,9 +211,9 @@ package
 		
 		/**
 		 * 
-		 * @param a 이미지의 height 값
+		 * @param a 이미지의 데이터
 		 * @param b
-		 * @return 내림차순
+		 * @return a가 height가 더 크다면 -1, b가 크다면 1, 같으면 0
 		 * 비교함수
 		 */
 		public function compareHeightDescending(a, b):int
@@ -192,6 +236,13 @@ package
 			} 
 		}
 		
+		/**
+		 * 
+		 * @param a 이미지의 데이터
+		 * @param b
+		 * @return 
+		 * 
+		 */
 		public function compareHeightAscending(a, b):int
 		{
 			var aHeight:int = a.bitmapData.height;
@@ -211,5 +262,33 @@ package
 				return 0; 
 			} 
 		}
+		
+		/**
+		 * 
+		 * @param a 이미지의 데이터
+		 * @param b 이미지의 데이터
+		 * @return  a가 면적이 더 크다면 -1, b가 크다면 1, 같으면 0
+		 * 
+		 */
+		public function compareAreaDescending(a, b):int
+		{
+			var aArea:int = a.bitmapData.height * a.bitmapData.width;
+			var bArea:int = b.bitmapData.height * b.bitmapData.width;
+			
+			
+			if (bArea < aArea) 
+			{ 
+				return -1; 
+			} 
+			else if (bArea > aArea) 
+			{ 
+				return 1; 
+			} 
+			else 
+			{ 
+				return 0; 
+			} 
+		}
+		
 	}
 }
