@@ -4,11 +4,11 @@ package
 	import flash.display.Loader;
 	import flash.display.LoaderInfo;
 	import flash.events.Event;
+	import flash.filesystem.File;
 	import flash.net.URLRequest;
 
 	public class ResourceLoader
-	{
-		//File.getDirectoryListing() 써라!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	{		
 		private var _completeFunc:Function;		
 		
 		
@@ -43,7 +43,10 @@ package
 		public function ResourceLoader(cFunc:Function)
 		{
 			_completeFunc = cFunc;
-			buildURLArray();			
+			
+			var array:Array = new Array();
+			array = getResource();
+			findOnlyImageFile(array);
 			buildLoader();
 		}
 		
@@ -69,7 +72,9 @@ package
 			
 			_imageDataArray.push(imageData);
 			
+			loaderInfo.removeEventListener(Event.COMPLETE, onLoaderComplete);
 			_completeFunc();
+			
 			
 		}
 		
@@ -82,48 +87,50 @@ package
 		{
 			for(var i:int = 0; i<_urlArray.length; ++i)
 			{
-				var _loader:Loader = new Loader();
+				var loader:Loader = new Loader();
 				
-				_loader.load(new URLRequest(_urlArray[i]));
-				_loader.contentLoaderInfo.addEventListener(Event.COMPLETE, onLoaderComplete);				
+				loader.load(new URLRequest(_urlArray[i]));
+				loader.contentLoaderInfo.addEventListener(Event.COMPLETE, onLoaderComplete);				
 				
 			}			
 			
-		}
-		
+		}		
 		
 		/**
-		 * 리소스의 이름을 Array에 푸쉬하는 메소드 
+		 * application 디렉토리에 있는 모든 파일을 가져와서 각각을 Array에 저장하고 리턴하는 메소드 
+		 * @return 폴더 안의 각각의 파일들
 		 * 
 		 */
-		private function buildURLArray():void
+		private function getResource():Array
 		{
-			_urlArray.push("0.png");
-			_urlArray.push("1.png");
-			_urlArray.push("2.png");
-			_urlArray.push("3.png");
-			_urlArray.push("4.png");
-			_urlArray.push("5.png");
-			_urlArray.push("6.png");
-			_urlArray.push("7.png");
-			_urlArray.push("8.png");
-			_urlArray.push("9.png");
+			var directory:File = File.applicationDirectory;
+			var array:Array = directory.getDirectoryListing();			
 			
-			_urlArray.push("a.png");
-			_urlArray.push("b.png");
-			_urlArray.push("c.png");
-			_urlArray.push("d.png");
-			_urlArray.push("e.png");
-			_urlArray.push("f.png");
-			_urlArray.push("g.png");
-			_urlArray.push("h.png");
-			_urlArray.push("i.png");
-			_urlArray.push("j.png");
-			_urlArray.push("k.png");
-			_urlArray.push("l.png");
-			_urlArray.push("m.png");
-		
+			return array;
 		}
 		
+		/**
+		 * 
+		 * @param resourceArray 폴더 안에 들어있던 모든 파일들
+		 * 확장자가 png이거나 jpg인 파일만 푸쉬하는 메소드
+		 */
+		private function findOnlyImageFile(resourceArray:Array):void
+		{			
+			for(var i:int = 0; i<resourceArray.length; ++i)
+			{
+				
+				
+				var url:String = resourceArray[i].url; 
+				var extension:String = url.substr(url.length - 3, url.length);
+				
+				if(extension == "png" || extension == "jpg")
+				{
+					url = url.substring(5, url.length);	
+					_urlArray.push(url);
+					
+					trace(url);
+				}
+			}
+		}
 	}
 }
