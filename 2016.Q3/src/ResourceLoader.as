@@ -68,8 +68,9 @@ package
 			var loaderInfo:LoaderInfo = LoaderInfo(event.target);
 			
 			var name:String = loaderInfo.url;
-			var temp:int = name.lastIndexOf("/");
-			name = name.substring(temp + 1, name.length - 4);			
+			var slash:int = name.lastIndexOf("/");
+			var dot:int = name.lastIndexOf(".");
+			name = name.substring(slash + 1, dot);			
 			
 			var imageData:ImageData = new ImageData();
 			imageData.name = name;
