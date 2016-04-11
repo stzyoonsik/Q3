@@ -5,7 +5,6 @@ package
 	import flash.display.LoaderInfo;
 	import flash.events.Event;
 	import flash.events.IOErrorEvent;
-	import flash.events.ProgressEvent;
 	import flash.filesystem.File;
 	import flash.net.URLRequest;
 
@@ -69,7 +68,8 @@ package
 			var loaderInfo:LoaderInfo = LoaderInfo(event.target);
 			
 			var name:String = loaderInfo.url;
-			name = name.substring(5, name.length - 4);			
+			var temp:int = name.lastIndexOf("/");
+			name = name.substring(temp + 1, name.length - 4);			
 			
 			var imageData:ImageData = new ImageData();
 			imageData.name = name;
@@ -120,6 +120,7 @@ package
 		private function getResource():Array
 		{
 			var directory:File = File.applicationDirectory.resolvePath("resources");
+			
 			var array:Array = directory.getDirectoryListing();			
 			
 			
@@ -129,15 +130,15 @@ package
 		/**
 		 * 
 		 * @param resourceArray 폴더 안에 들어있던 모든 파일들
-		 * 확장자가 png이거나 jpg인 파일만 푸쉬하는 메소드
+		 * 파일 이름을 push하는 메소드
 		 */
 		private function findOnlyImageFile(resourceArray:Array):void
 		{			
 			for(var i:int = 0; i<resourceArray.length; ++i)
 			{				
-				var url:String = resourceArray[i].url; 				
-			
+				var url:String = resourceArray[i].url; 		
 				url = url.substring(5, url.length);	
+				
 				_urlArray.push(url);					
 				_fileCount++;
 				
