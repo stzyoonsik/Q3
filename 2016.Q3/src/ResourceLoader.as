@@ -108,6 +108,7 @@ package
 			var directory:File = File.applicationDirectory;
 			var array:Array = directory.getDirectoryListing();			
 			
+			
 			return array;
 		}
 		

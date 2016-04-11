@@ -18,6 +18,7 @@ package
 		
 		public function Packer()
 		{
+			
 		}		
 
 
@@ -51,7 +52,7 @@ package
 			_forXMLArray = value;
 		}
 
-			
+		
 		
 		/**
 		 * 
@@ -135,14 +136,21 @@ package
 			var newLine:Boolean = true;
 			var tempHeight:int;
 			
+			var isFull:Boolean;
+			
 			//이미지의 height를 기준으로 내림차순 정렬
 			imageArray.sort(compareHeightDescending);
 			
 			
 			for(var i:int = 0; i<imageArray.length; ++i)
 			{				
-				bm = new Bitmap(imageArray[i].bitmapData);					
+				bm = new Bitmap(imageArray[i].bitmapData);				
 				
+				if(isFull)
+				{
+					_unpackedImageArray.push(imageArray[i]);
+					continue;
+				}
 				if(newLine)
 				{
 					if(i == 0)
@@ -179,8 +187,9 @@ package
 					if(point.y + imageArray[i].bitmapData.height > MAX_HEIGHT)
 					{
 						trace(i + "개의 이미지 패킹 완료");
-						trace(imageArray.length - i + "개의 이미지는 패킹되지 않았음.");
-						break;
+						trace(imageArray.length - i + "개의 이미지는 패킹되지 않았음.");						
+						isFull = true;
+						continue;
 					}
 					trace(i + " " + point + " width = " + imageArray[i].bitmapData.width + " height = " + imageArray[i].bitmapData.height);
 				}
@@ -202,8 +211,10 @@ package
 				imageData.rect.height = imageArray[i].bitmapData.height;
 				_forXMLArray.push(imageData);								
 				
+				_packedImageCount++;
 			}
 			
+			trace(_unpackedImageArray.length + "개의 이미지 패킹 실패");
 			trace(imageArray.length + "개의 이미지 중 " + _forXMLArray.length + "개의 이미지 패킹 완료");
 			return new Bitmap(canvas);
 		}
@@ -214,7 +225,7 @@ package
 		 * @param a 이미지의 데이터
 		 * @param b
 		 * @return a가 height가 더 크다면 -1, b가 크다면 1, 같으면 0
-		 * 비교함수
+		 * 내림차순 비교함수
 		 */
 		public function compareHeightDescending(a, b):int
 		{
@@ -241,7 +252,7 @@ package
 		 * @param a 이미지의 데이터
 		 * @param b
 		 * @return 
-		 * 
+		 * 오름차순
 		 */
 		public function compareHeightAscending(a, b):int
 		{
@@ -268,7 +279,7 @@ package
 		 * @param a 이미지의 데이터
 		 * @param b 이미지의 데이터
 		 * @return  a가 면적이 더 크다면 -1, b가 크다면 1, 같으면 0
-		 * 
+		 * 내림차순
 		 */
 		public function compareAreaDescending(a, b):int
 		{
