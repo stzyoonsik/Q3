@@ -53,7 +53,7 @@ package
 			
 			var array:Array = new Array();
 			array = getResource();
-			findOnlyImageFile(array);
+			countImageFile(array);
 			buildLoader();
 		}
 		
@@ -82,6 +82,7 @@ package
 			_imageDataArray.push(imageData);
 			
 			loaderInfo.removeEventListener(Event.COMPLETE, onLoaderComplete);
+			
 			_completeFunc();
 			
 			
@@ -133,7 +134,7 @@ package
 		 * @param resourceArray 폴더 안에 들어있던 모든 파일들
 		 * 파일 이름을 push하는 메소드
 		 */
-		private function findOnlyImageFile(resourceArray:Array):void
+		private function countImageFile(resourceArray:Array):void
 		{			
 			for(var i:int = 0; i<resourceArray.length; ++i)
 			{				

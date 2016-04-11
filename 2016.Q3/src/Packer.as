@@ -75,8 +75,9 @@ package
 			
 			for(var i:int = 0; i<imageArray.length; ++i)
 			{	
+				trace("삽입 이미지 Name = " + imageArray[i].name + " Rect = " + imageArray[i].bitmapData.rect);
 				var rect:Rectangle = maxRect.quickInsert(imageArray[i].bitmapData.width, imageArray[i].bitmapData.height); 
-				
+				trace("삽입 위치 = " + rect);
 				if(rect == null)
 				{
 					_unpackedImageArray.push(imageArray[i]);
@@ -123,7 +124,7 @@ package
 		 * @return 새 Bitmap에 이미지를 넣고 리턴
 		 * 하나의 큰 도화지에 이미지들을 Height를 기준으로 내림차순으로 넣어주는 메소드		 * 
 		 */
-		public function mergeImageByHeight(imageArray:Array):Bitmap
+		public function mergeImageByShelf(imageArray:Array):Bitmap
 		{
 			var canvas:BitmapData = new BitmapData(MAX_WIDTH, MAX_HEIGHT, false);
 			var rect:Rectangle = new Rectangle(0, 0, MAX_WIDTH, MAX_HEIGHT);

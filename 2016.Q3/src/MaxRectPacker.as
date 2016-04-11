@@ -51,14 +51,23 @@ package
 			}
 			
 			var numRectanglesToProcess:int = freeRectangles.length;
+			//trace("freeRectangles.length = " + numRectanglesToProcess);
 			var i:int = 0;
 			while (i < numRectanglesToProcess) 
 			{
 				if (splitFreeNode(freeRectangles[i], newNode)) 
 				{
+					trace(freeRectangles[i] + "삭제");
 					freeRectangles.splice(i, 1);
 					--numRectanglesToProcess;
 					--i;
+					trace("**********************************************");
+					for(var j:int = 0; j<freeRectangles.length; ++j)
+					{
+						trace("freeRectangles[" + j +  "] = " + freeRectangles[j]);
+					}
+					
+					trace("**********************************************");
 				}
 				i++;
 			}
@@ -112,6 +121,7 @@ package
 				{
 					newNode = freeNode.clone();
 					newNode.height = usedNode.y - newNode.y;
+					//trace(newNode);
 					freeRectangles.push(newNode);
 				}
 				// New node at the bottom side of the used node.
@@ -120,6 +130,7 @@ package
 					newNode = freeNode.clone();
 					newNode.y = usedNode.y + usedNode.height;
 					newNode.height = freeNode.y + freeNode.height - (usedNode.y + usedNode.height);
+					//trace(newNode);
 					freeRectangles.push(newNode);
 				}
 			}
@@ -130,6 +141,7 @@ package
 				{
 					newNode = freeNode.clone();
 					newNode.width = usedNode.x - newNode.x;
+					//trace(newNode);
 					freeRectangles.push(newNode);
 				}
 				// New node at the right side of the used node.
@@ -138,6 +150,7 @@ package
 					newNode = freeNode.clone();
 					newNode.x = usedNode.x + usedNode.width;
 					newNode.width = freeNode.x + freeNode.width - (usedNode.x + usedNode.width);
+					//trace(newNode);
 					freeRectangles.push(newNode);
 				}
 			}
@@ -161,6 +174,7 @@ package
 					tmpRect2 = freeRectangles[j];
 					if (isContainedIn(tmpRect,tmpRect2)) 
 					{
+						trace(freeRectangles[i] + "삭제");
 						freeRectangles.splice(i, 1);
 						--i;
 						--len;
@@ -168,6 +182,7 @@ package
 					}
 					if (isContainedIn(tmpRect2,tmpRect)) 
 					{
+						trace(freeRectangles[j] + "삭제");
 						freeRectangles.splice(j, 1);
 						--len;
 						--j;

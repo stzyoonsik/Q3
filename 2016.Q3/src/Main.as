@@ -11,13 +11,15 @@ package
 	import flash.utils.ByteArray;
 	
 	[SWF(width = "1024", height = "1024")]
+	
+	
 	public class Main extends Sprite
-	{
+	{		
+		
 		private var _loadResource:ResourceLoader;
 		private var _packer:Packer = new Packer();
 		
 		private var _count:int = 0;
-		//private var _loading:Number = 0;
 		
 	
 		private var _fileStream:FileStream = new FileStream(); 
@@ -27,12 +29,16 @@ package
 		
 		private var _finalArray:Array = new Array();
 		
+		private var _loadingText:TextField = new TextField();
+		
+		
 		public function Main()
 		{
-			_loadResource = new ResourceLoader(onLoadingComplete);
+			_loadResource = new ResourceLoader(onLoadingComplete);			
 			initButton();					
 			
-		}
+		}		
+		
 		
 		/**
 		 * 버튼의 내용과 위치를 초기화하는 메소드 
@@ -40,13 +46,18 @@ package
 		 */
 		public function initButton():void
 		{
+			_loadingText.x = 325;
+			_loadingText.y = 200;
+			_loadingText.autoSize = "left";
+			addChild(_loadingText);
+			
+			
+			
 			var text0:TextField = new TextField();
-			text0.text = "Height";
+			text0.text = "Shelf";
 			text0.autoSize = "left";
 			text0.border = true;
-			
-			//text.backgroundColor = 0x555555;
-			_button0.upState = text0;
+			_button0.upState = text0;			
 			_button0.overState = text0;
 			_button0.hitTestState = text0;
 			_button0.x = 300;
@@ -89,7 +100,7 @@ package
 			}
 			
 			makeSpriteSheet(select);
-				
+			stage.removeEventListener(MouseEvent.MOUSE_UP, onButtonMouseUp);
 		}
 		
 		/**
@@ -106,7 +117,7 @@ package
 				{
 					//높이 우선 알고리즘
 					case 0:  
-						bitmap = _packer.mergeImageByHeight(_finalArray);
+						bitmap = _packer.mergeImageByShelf(_finalArray);
 						break;
 					//Max Rects 알고리즘
 					case 1:
@@ -132,6 +143,7 @@ package
 				}				
 			}
 		}
+		
 		/**
 		 * 모든 리소스의 로딩이 끝났는지를 검사하는 메소드
 		 * 다 끝났다면 새 배열로 복사함
@@ -141,7 +153,16 @@ package
 		{	
 			
 			//모두 로딩이 됬다면
-			trace((_loadResource.imageDataArray.length / _loadResource.fileCount * 100).toFixed(1) + "% 완료");
+			//trace((_loadResource.imageDataArray.length / _loadResource.fileCount * 100).toFixed(1) + "% 완료");
+			if(_loadResource.imageDataArray.length / _loadResource.fileCount != 1)
+				_loadingText.text = (_loadResource.imageDataArray.length / _loadResource.fileCount * 100).toFixed(1);
+			else if(_loadResource.imageDataArray.length / _loadResource.fileCount == 1)
+				_loadingText.text = "이미지 로딩 완료\n" +
+					"알고리즘을 선택하세요";
+			else
+				_loadingText.text = "이미지 로딩 실패";
+				
+			
 			if(_loadResource.imageDataArray.length == _loadResource.fileCount)
 			{	
 				_finalArray = _loadResource.imageDataArray;
