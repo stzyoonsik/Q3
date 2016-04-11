@@ -16,20 +16,19 @@ package
 	public class Main extends Sprite
 	{		
 		
-		private var _loadResource:ResourceLoader;
-		private var _packer:Packer = new Packer();
+		private var _loadResource:ResourceLoader;						//ResourceLoader 객체 선언
+		private var _packer:Packer = new Packer();						//Packer 객체 선언 및 초기화
 		
-		private var _count:int = 0;
-		
+		private var _count:int = 0;										//시트가 1장을 넘어갈 경우 이름을 바꿔주기 위한 변수
 	
-		private var _fileStream:FileStream = new FileStream(); 
+		private var _fileStream:FileStream = new FileStream(); 			//파일스트림 객체
 		
-		private var _button0:SimpleButton = new SimpleButton();
-		private var _button1:SimpleButton = new SimpleButton();
+		private var _button0:SimpleButton = new SimpleButton();			//알고리즘 선택 버튼
+		private var _button1:SimpleButton = new SimpleButton();			//알고리즘 선택 버튼
 		
-		private var _finalArray:Array = new Array();
+		private var _finalArray:Array = new Array();					//최종적으로 만들어지는 배열
 		
-		private var _loadingText:TextField = new TextField();
+		private var _loadingText:TextField = new TextField();			//이미지 로딩의 진행을 알려주는 텍스트필드
 		
 		
 		public function Main()
@@ -46,13 +45,14 @@ package
 		 */
 		public function initButton():void
 		{
+			//로딩 텍스트필드 
 			_loadingText.x = 325;
 			_loadingText.y = 200;
 			_loadingText.autoSize = "left";
 			addChild(_loadingText);
 			
 			
-			
+			//버튼0 (Shelf)
 			var text0:TextField = new TextField();
 			text0.text = "Shelf";
 			text0.autoSize = "left";
@@ -64,12 +64,11 @@ package
 			_button0.y = 300;
 			addChild(_button0);
 			
-			
+			//버튼1 (MaxRect)
 			var text1:TextField = new TextField(); 
 			text1.text = "Max Rects";
 			text1.autoSize = "left";
-			text1.border = true;
-			
+			text1.border = true;			
 			_button1.upState = text1;
 			_button1.overState = text1;
 			_button1.hitTestState = text1;
@@ -77,6 +76,7 @@ package
 			_button1.y = 300;
 			addChild(_button1);
 			
+			//마우스 클릭을 떼는 시점을 구별하기위해 이벤트 리스너에 등록
 			stage.addEventListener(MouseEvent.MOUSE_UP, onButtonMouseUp);
 		}
 		
@@ -88,6 +88,7 @@ package
 		public function onButtonMouseUp(e:MouseEvent):void
 		{
 			var select:int;
+			//마우스 클릭을 떼는 시점에 타겟이 버튼0이면 내부적으로 변수 값을 0으로 하고, 이후에 있을 makeSpriteSheet 메소드에 매개변수로 넘겨준다. (버튼1이면 1을 넘겨줌)
 			switch(e.target)
 			{
 				case _button0 :
@@ -100,12 +101,13 @@ package
 			}
 			
 			makeSpriteSheet(select);
+			//프로그램 전체에서 클릭이벤트는 한번만 있기 때문에 바로 리무브
 			stage.removeEventListener(MouseEvent.MOUSE_UP, onButtonMouseUp);
 		}
 		
 		/**
 		 * 
-		 * @param select 0이면 높이우선 , 1이면 맥스렉트
+		 * @param select 0이면 shelf , 1이면 맥스렉트
 		 * 스프라이트 시트를 만드는 메소드
 		 */
 		public function makeSpriteSheet(select:int):void
@@ -129,8 +131,7 @@ package
 								
 				saveToPNG(bitmap);	
 								
-				var tempArray:Array = _packer.forXMLArray;
-				exportToXML(tempArray);
+				exportToXML(_packer.forXMLArray);
 				
 				//시트에 옴겨지지 못하고 남은 이미지가 존재한다면
 				if(_packer.unpackedImageArray.length != 0)
@@ -152,8 +153,7 @@ package
 		public function onLoadingComplete():void
 		{	
 			
-			//모두 로딩이 됬다면
-			//trace((_loadResource.imageDataArray.length / _loadResource.fileCount * 100).toFixed(1) + "% 완료");
+			//얼마나 로딩됬는지를 나타냄
 			if(_loadResource.imageDataArray.length / _loadResource.fileCount != 1)
 				_loadingText.text = (_loadResource.imageDataArray.length / _loadResource.fileCount * 100).toFixed(1);
 			else if(_loadResource.imageDataArray.length / _loadResource.fileCount == 1)
@@ -162,7 +162,7 @@ package
 			else
 				_loadingText.text = "이미지 로딩 실패";
 				
-			
+			//모두 로딩이 됬다면
 			if(_loadResource.imageDataArray.length == _loadResource.fileCount)
 			{	
 				_finalArray = _loadResource.imageDataArray;
@@ -177,6 +177,7 @@ package
 		 */
 		public function saveToPNG(bitmap:Bitmap):void
 		{
+			//내문서에 저장됨
 			var _pngFile:File = File.documentsDirectory.resolvePath("sprite_sheet" + _count + ".png");
 			var byteArray:ByteArray = PNGEncoder.encode(bitmap.bitmapData);
 			
