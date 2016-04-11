@@ -99,17 +99,18 @@ package
 			
 			
 			
-			for(var j:int = 0; j<_forXMLArray.length; ++j)
-			{
-				trace(_forXMLArray[j].name + "\t" +  _forXMLArray[j].rect);
-			}
+//			for(var j:int = 0; j<_forXMLArray.length; ++j)
+//			{
+//				trace(_forXMLArray[j].name + "\t" +  _forXMLArray[j].rect);
+//			}
 			trace(imageArray.length + "개의 이미지 중 " + _forXMLArray.length + "개의 이미지 패킹 완료");
 			
-			for(var k:int = 0; k<_unpackedImageArray.length; ++k)
-			{
-				trace(_unpackedImageArray[k].name + "\t" +  _unpackedImageArray[k].rect);
-			}
+//			for(var k:int = 0; k<_unpackedImageArray.length; ++k)
+//			{
+//				trace(_unpackedImageArray[k].name + "\t" +  _unpackedImageArray[k].rect);
+//			}
 			trace(_unpackedImageArray.length + "개의 이미지 패킹 실패");
+			
 			
 			return new Bitmap(canvas);
 		}
@@ -156,12 +157,12 @@ package
 					if(i == 0)
 					{
 						tempHeight = imageArray[i].bitmapData.height;
-						trace("다음 라인의 height = " + tempHeight, imageArray[i].name);
+						//trace("다음 라인의 height = " + tempHeight, imageArray[i].name);
 					}
 					else
 					{
 						tempHeight = imageArray[i-1].bitmapData.height;
-						trace("다음 라인의 height = " + tempHeight, imageArray[i-1].name);
+						//trace("다음 라인의 height = " + tempHeight, imageArray[i-1].name);
 					}
 					
 					newLine = false;
@@ -191,12 +192,12 @@ package
 						isFull = true;
 						continue;
 					}
-					trace(i + " " + point + " width = " + imageArray[i].bitmapData.width + " height = " + imageArray[i].bitmapData.height);
+					//trace(i + " " + point + " width = " + imageArray[i].bitmapData.width + " height = " + imageArray[i].bitmapData.height);
 				}
 				
 				else
 				{
-					trace(i + " " + point + " width = " + imageArray[i].bitmapData.width + " height = " + imageArray[i].bitmapData.height);						
+					//trace(i + " " + point + " width = " + imageArray[i].bitmapData.width + " height = " + imageArray[i].bitmapData.height);						
 				}
 				
 				//큰 도화지에 하나씩 붙여넣음
@@ -216,6 +217,8 @@ package
 			
 			trace(_unpackedImageArray.length + "개의 이미지 패킹 실패");
 			trace(imageArray.length + "개의 이미지 중 " + _forXMLArray.length + "개의 이미지 패킹 완료");
+			
+			
 			return new Bitmap(canvas);
 		}
 		

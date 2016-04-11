@@ -4,18 +4,23 @@ package
 	import flash.display.Loader;
 	import flash.display.LoaderInfo;
 	import flash.events.Event;
+	import flash.events.IOErrorEvent;
+	import flash.events.ProgressEvent;
 	import flash.filesystem.File;
 	import flash.net.URLRequest;
 
 	public class ResourceLoader
 	{		
+
+		
+
 		private var _completeFunc:Function;		
 		
 		
 		private var _urlArray:Array = new Array();					//파일명이 담긴 배열
 		private var _imageDataArray:Array = new Array();			//ImageData가 담긴 배열 
 		
-	
+		private var _fileCount:int;
 		
 		
 		public function get imageDataArray():Array
@@ -28,16 +33,17 @@ package
 			_imageDataArray = value;
 		}
 		
-		public function get urlArray():Array
+	
+		
+		public function get fileCount():int
 		{
-			return _urlArray;
+			return _fileCount;
 		}
 		
-		public function set urlArray(value:Array):void
+		public function set fileCount(value:int):void
 		{
-			_urlArray = value;
+			_fileCount = value;
 		}
-		
 		
 		
 		
@@ -80,6 +86,12 @@ package
 			
 		}
 		
+		public function onLoaderFailed(event:Event):void
+		{
+			trace("로드 실패 " + event);
+			_fileCount--;
+		}
+		
 		
 		/**
 		 * 각각의 리소스를 로드하고 이벤트를 붙여주는 메소드 
@@ -89,14 +101,16 @@ package
 		{
 			for(var i:int = 0; i<_urlArray.length; ++i)
 			{
-				var loader:Loader = new Loader();
-				
+				var loader:Loader = new Loader();				
 				loader.load(new URLRequest(_urlArray[i]));
 				loader.contentLoaderInfo.addEventListener(Event.COMPLETE, onLoaderComplete);				
+				loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, onLoaderFailed);
 				
 			}			
 			
 		}		
+		
+	
 		
 		/**
 		 * application 디렉토리에 있는 모든 파일을 가져와서 각각을 Array에 저장하고 리턴하는 메소드 
@@ -105,7 +119,7 @@ package
 		 */
 		private function getResource():Array
 		{
-			var directory:File = File.applicationDirectory;
+			var directory:File = File.applicationDirectory.resolvePath("resources");
 			var array:Array = directory.getDirectoryListing();			
 			
 			
@@ -121,17 +135,12 @@ package
 		{			
 			for(var i:int = 0; i<resourceArray.length; ++i)
 			{				
+				var url:String = resourceArray[i].url; 				
+			
+				url = url.substring(5, url.length);	
+				_urlArray.push(url);					
+				_fileCount++;
 				
-				var url:String = resourceArray[i].url; 
-				
-				var extension:String = url.substr(url.lastIndexOf(".") + 1, url.length);
-				
-				if(extension == "png" || extension == "jpg")
-				{
-					url = url.substring(5, url.length);	
-					_urlArray.push(url);					
-					
-				}
 			}
 		}
 	}

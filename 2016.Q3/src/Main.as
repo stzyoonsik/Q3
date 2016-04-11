@@ -17,7 +17,7 @@ package
 		private var _packer:Packer = new Packer();
 		
 		private var _count:int = 0;
-		private var _loading:Number = 0;
+		//private var _loading:Number = 0;
 		
 	
 		private var _fileStream:FileStream = new FileStream(); 
@@ -111,7 +111,7 @@ package
 					//Max Rects 알고리즘
 					case 1:
 						bitmap = _packer.mergeImageByMaxRects(_finalArray);
-							break;
+						break;
 				
 				}
 				addChild(bitmap);
@@ -129,12 +129,8 @@ package
 					_finalArray = _packer.unpackedImageArray;
 					_packer = new Packer();		
 					
-				}
-				
+				}				
 			}
-			
-			
-			
 		}
 		/**
 		 * 모든 리소스의 로딩이 끝났는지를 검사하는 메소드
@@ -142,13 +138,11 @@ package
 		 * 
 		 */
 		public function onLoadingComplete():void
-		{								
-			//var bitmapDataArray:Array = _loadResource.imageDataArray;
-			_loading++;
-			trace("이미지 로딩  " + (_loading/_loadResource.urlArray.length * 100).toFixed(1) + "% 완료");
+		{	
 			
 			//모두 로딩이 됬다면
-			if(_loadResource.imageDataArray.length == _loadResource.urlArray.length)
+			trace((_loadResource.imageDataArray.length / _loadResource.fileCount * 100).toFixed(1) + "% 완료");
+			if(_loadResource.imageDataArray.length == _loadResource.fileCount)
 			{	
 				_finalArray = _loadResource.imageDataArray;
 

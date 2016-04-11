@@ -42,6 +42,7 @@ package
 		
 		public function quickInsert(width:Number, height:Number):Rectangle 
 		{
+			//trace("freeRectangles.length = " + freeRectangles.length);
 			var newNode:Rectangle = quickFindPositionForNewNodeBestAreaFit(width, height);
 			
 			if (newNode.height == 0) 
@@ -77,8 +78,9 @@ package
 			for(var i:int = 0, l:int = freeRectangles.length; i < l; i++) {
 				r = freeRectangles[i];
 				// Try to place the rectangle in upright (non-flipped) orientation.
-				if (r.width >= width && r.height >= height) {
-					areaFit = r.width * r.height - width * height;
+				if (r.width >= width && r.height >= height) 
+				{
+					areaFit = r.width * r.height - width * height;					
 					if (areaFit < score) {
 						bestNode.x = r.x;
 						bestNode.y = r.y;
@@ -154,7 +156,8 @@ package
 			{
 				j = i + 1;
 				tmpRect = freeRectangles[i];
-				while (j < len) {
+				while (j < len) 
+				{
 					tmpRect2 = freeRectangles[j];
 					if (isContainedIn(tmpRect,tmpRect2)) 
 					{
