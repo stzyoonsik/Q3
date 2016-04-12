@@ -56,20 +56,21 @@ package
 		public function init():void
 		{
 			//로딩 텍스트필드 
-			_loadingText.x = 325;
-			_loadingText.y = 200;
+			_loadingText.x = 700;
+			_loadingText.y = 0;
 			_loadingText.autoSize = "left";
 			addChild(_loadingText);
 			
 			_button0 = createButton("Shelf", 100, 0, 0xFFFFFF);
 			_button1 = createButton("Max Rects", 200, 0, 0xFFFFFF);
 			_button2 = createButton("이미지 보기", 300, 0, 0xAA00FF);
-			_button3 = createButton("이전", 500, 0, 0x11AAFF);
-			_button4 = createButton("다음", 600, 0, 0x11AAFF);			
+			_button3 = createButton("이전", 400, 0, 0x11AAFF);
+			_button4 = createButton("다음", 500, 0, 0x11AAFF);			
 		
 			
-			_pageNum.x = 700;
+			_pageNum.x = 450;
 			_pageNum.y = 0;
+			_pageNum.autoSize = "left";
 			addChild(_pageNum);
 			
 			
@@ -82,6 +83,7 @@ package
 		 * @param text 버튼의 이름
 		 * @param x 버튼의 x좌표
 		 * @param y 버튼의 y좌표
+		 * @param bgcolor 텍스트필드의 배경색
 		 * @return 버튼
 		 * SimpleButton을 세팅한 후 리턴하는 메소드
 		 */
@@ -96,7 +98,7 @@ package
 			
 			var button:SimpleButton = new SimpleButton();
 			button.upState = name;			
-			button.overState = name;
+			button.overState = name;			
 			button.hitTestState = name;
 			button.x = x;
 			button.y = y;
@@ -117,12 +119,12 @@ package
 			switch(e.target)
 			{
 				case _button0 :					
-					_loadingText.text = "";
+					_loadingText.text = "패킹 완료. 이미지 보기를 클릭하세요.";
 					makeSpriteSheet(0);
 					break;
 				
 				case _button1 :
-					_loadingText.text = "";
+					_loadingText.text = "패킹 완료. 이미지 보기를 클릭하세요.";
 					makeSpriteSheet(1);				
 					break;
 				//버튼2는 이미지 보기/안보기
@@ -132,6 +134,7 @@ package
 						_showArray[_currentPage].visible = !_showArray[_currentPage].visible;
 					break;
 				}
+					
 				case _button3 :					
 					if(_currentPage > 0)
 						_currentPage--;
@@ -145,8 +148,7 @@ package
 					
 					break;
 				
-				case _button4 :
-					
+				case _button4 :					
 					_currentPage++;
 					_pageNum.text = _currentPage.toString();
 					for(i = 0; i<_showArray.length; ++i)
@@ -158,8 +160,6 @@ package
 					
 					break;
 			}
-			
-			
 		}
 		
 
@@ -288,7 +288,7 @@ package
 		
 		/**
 		 * 
-		 * @param rectData 벡터에 저장된 point, width, height
+		 * @param imageData 벡터에 저장된 point, width, height
 		 * xml 파일로 출력하는 메소드
 		 */
 		public function exportToXML(imageData:Array):void
