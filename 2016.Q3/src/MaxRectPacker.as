@@ -57,17 +57,17 @@ package
 			{
 				if (splitFreeNode(freeRectangles[i], newNode)) 
 				{
-					trace(freeRectangles[i] + "삭제");
+//					trace(freeRectangles[i] + "삭제");
 					freeRectangles.splice(i, 1);
 					--numRectanglesToProcess;
 					--i;
-					trace("**********************************************");
-					for(var j:int = 0; j<freeRectangles.length; ++j)
-					{
-						trace("freeRectangles[" + j +  "] = " + freeRectangles[j]);
-					}
-					
-					trace("**********************************************");
+//					trace("**********************************************");
+//					for(var j:int = 0; j<freeRectangles.length; ++j)
+//					{
+//						trace("freeRectangles[" + j +  "] = " + freeRectangles[j]);
+//					}
+//					
+//					trace("**********************************************");
 				}
 				i++;
 			}
@@ -174,7 +174,7 @@ package
 					tmpRect2 = freeRectangles[j];
 					if (isContainedIn(tmpRect,tmpRect2)) 
 					{
-						trace(freeRectangles[i] + "삭제");
+//						trace(freeRectangles[i] + "삭제");
 						freeRectangles.splice(i, 1);
 						--i;
 						--len;
@@ -182,7 +182,7 @@ package
 					}
 					if (isContainedIn(tmpRect2,tmpRect)) 
 					{
-						trace(freeRectangles[j] + "삭제");
+//						trace(freeRectangles[j] + "삭제");
 						freeRectangles.splice(j, 1);
 						--len;
 						--j;

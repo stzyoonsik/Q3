@@ -9,7 +9,7 @@ package
 	{
 		private const MAX_WIDTH:int = 1024;
 		private const MAX_HEIGHT:int = 1024;
-		
+		private const BGCOLOR:uint = 0xAAAAAA;
 		private var _forXMLArray:Array = new Array();					//xml에 쓸 데이터 배열
 		
 		private var _unpackedImageArray:Array = new Array();			//패킹되지 못한 이미지 파일들이 담긴 배열
@@ -64,13 +64,15 @@ package
 		{
 			var canvas:BitmapData = new BitmapData(MAX_WIDTH, MAX_HEIGHT, false);
 			var tempRect:Rectangle = new Rectangle(0, 0, MAX_WIDTH, MAX_HEIGHT);
-			canvas.fillRect(tempRect, 0xAAAAAA);
+			canvas.fillRect(tempRect, BGCOLOR);
+			
 			
 			
 			var mult:uint = 0xFF;			
 			
 			var maxRect:MaxRectPacker = new MaxRectPacker(MAX_WIDTH, MAX_HEIGHT);
 			
+			//면적 기준 내림차순 정렬
 			imageArray.sort(compareAreaDescending);
 			
 			for(var i:int = 0; i<imageArray.length; ++i)
@@ -111,7 +113,7 @@ package
 //				trace(_unpackedImageArray[k].name + "\t" +  _unpackedImageArray[k].rect);
 //			}
 			trace(_unpackedImageArray.length + "개의 이미지 패킹 실패");
-			
+			canvas = Resizer.cutCanvas(canvas);
 			
 			return new Bitmap(canvas);
 		}
@@ -219,7 +221,7 @@ package
 			trace(_unpackedImageArray.length + "개의 이미지 패킹 실패");
 			trace(imageArray.length + "개의 이미지 중 " + _forXMLArray.length + "개의 이미지 패킹 완료");
 			
-			
+			canvas = Resizer.cutCanvas(canvas);
 			return new Bitmap(canvas);
 		}
 		
