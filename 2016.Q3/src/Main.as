@@ -24,7 +24,7 @@ package
 	
 		private var _fileStream:FileStream = new FileStream(); 			//파일스트림 객체
 		
-		private var _button0:SimpleButton = new SimpleButton();			//알고리즘 선택 버튼
+		private var _button0:SimpleButton;			//알고리즘 선택 버튼
 		private var _button1:SimpleButton = new SimpleButton();			//알고리즘 선택 버튼
 		
 		private var _button2:SimpleButton = new SimpleButton();			//리사이징 선택 버튼
@@ -46,16 +46,17 @@ package
 		public function Main()
 		{
 			_loadResource = new ResourceLoader(onLoadingComplete);			
-			initButton();					
+			init();					
 			
 		}		
 		
+
 		
 		/**
 		 * 버튼의 내용과 위치를 초기화하는 메소드 
 		 * 마우스 업 이벤트가 달려있음
 		 */
-		public function initButton():void
+		public function init():void
 		{
 			//로딩 텍스트필드 
 			_loadingText.x = 325;
@@ -63,65 +64,12 @@ package
 			_loadingText.autoSize = "left";
 			addChild(_loadingText);
 			
-			
-			//버튼0 (Shelf)
-			var text0:TextField = new TextField();
-			text0.text = "Shelf";
-			text0.autoSize = "left";
-			text0.border = true;
-			_button0.upState = text0;			
-			_button0.overState = text0;
-			_button0.hitTestState = text0;
-			_button0.x = 100;
-			_button0.y = 0;
-			addChild(_button0);
-			
-			//버튼1 (MaxRect)
-			var text1:TextField = new TextField(); 
-			text1.text = "Max Rects";
-			text1.autoSize = "left";
-			text1.border = true;			
-			_button1.upState = text1;
-			_button1.overState = text1;
-			_button1.hitTestState = text1;
-			_button1.x = 200;
-			_button1.y = 0;
-			addChild(_button1);
-			
-			//버튼2 (리사이징)			 
-			_text2.text = "Resizing";
-			_text2.autoSize = "left";
-			_text2.border = true;			
-			_button2.upState = _text2;
-			_button2.overState = _text2;
-			_button2.hitTestState = _text2;
-			_button2.x = 0;
-			_button2.y = 0;
-			addChild(_button2);
-			
-			//이전 버튼
-			var text3:TextField = new TextField();
-			text3.text = "이전";
-			text3.autoSize = "left";
-			text3.border = true;
-			_button3.upState = text3;			
-			_button3.overState = text3;
-			_button3.hitTestState = text3;
-			_button3.x = 500;
-			_button3.y = 0;
-			addChild(_button3);
-			
-			//다음 버튼
-			var text4:TextField = new TextField();
-			text4.text = "다음";
-			text4.autoSize = "left";
-			text4.border = true;
-			_button4.upState = text4;			
-			_button4.overState = text4;
-			_button4.hitTestState = text4;
-			_button4.x = 600;
-			_button4.y = 0;
-			addChild(_button4);
+			_button0 = createButton("Shelf", 100, 0);
+			_button1 = createButton("Max Rects", 200, 0);
+			_button2 = createButton("Resizing", 0, 0);
+			_button3 = createButton("이전", 500, 0);
+			_button4 = createButton("다음", 600, 0);			
+		
 			
 			_pageNum.x = 700;
 			_pageNum.y = 0;
@@ -130,6 +78,31 @@ package
 			
 			//마우스 클릭을 떼는 시점을 구별하기위해 이벤트 리스너에 등록
 			stage.addEventListener(MouseEvent.MOUSE_UP, onButtonMouseUp);
+		}
+		
+		/**
+		 * 
+		 * @param text 버튼의 이름
+		 * @param x 버튼의 x좌표
+		 * @param y 버튼의 y좌표
+		 * @return 버튼
+		 * SimpleButton을 세팅한 후 리턴하는 메소드
+		 */
+		public function createButton(text:String, x:int, y:int):SimpleButton
+		{
+			var button:SimpleButton = new SimpleButton();
+			var name:TextField = new TextField();
+			name.text = text;
+			name.autoSize = "left";
+			name.border = true;
+			button.upState = name;			
+			button.overState = name;
+			button.hitTestState = name;
+			button.x = x;
+			button.y = y;
+			addChild(button);
+			
+			return button;
 		}
 		
 		/**
