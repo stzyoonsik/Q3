@@ -113,7 +113,7 @@ package
 //				trace(_unpackedImageArray[k].name + "\t" +  _unpackedImageArray[k].rect);
 //			}
 			trace(_unpackedImageArray.length + "개의 이미지 패킹 실패");
-			canvas = Resizer.cutCanvas(canvas);
+			
 			
 			return new Bitmap(canvas);
 		}
@@ -221,7 +221,7 @@ package
 			trace(_unpackedImageArray.length + "개의 이미지 패킹 실패");
 			trace(imageArray.length + "개의 이미지 중 " + _forXMLArray.length + "개의 이미지 패킹 완료");
 			
-			canvas = Resizer.cutCanvas(canvas);
+			
 			return new Bitmap(canvas);
 		}
 		

@@ -10,6 +10,7 @@ package
 	import flash.text.TextField;
 	import flash.utils.ByteArray;
 	
+	
 	[SWF(width = "1024", height = "1024")]
 	
 	
@@ -25,6 +26,10 @@ package
 		
 		private var _button0:SimpleButton = new SimpleButton();			//알고리즘 선택 버튼
 		private var _button1:SimpleButton = new SimpleButton();			//알고리즘 선택 버튼
+		
+		private var _button2:SimpleButton = new SimpleButton();			//리사이징 선택 버튼
+		private var _text2:TextField = new TextField();
+		private var _isReSizing:Boolean;
 		
 		private var _finalArray:Array = new Array();					//최종적으로 만들어지는 배열
 		
@@ -76,6 +81,18 @@ package
 			_button1.y = 300;
 			addChild(_button1);
 			
+			//버튼2 (리사이징)
+			 
+			_text2.text = "Resizing";
+			_text2.autoSize = "left";
+			_text2.border = true;			
+			_button2.upState = _text2;
+			_button2.overState = _text2;
+			_button2.hitTestState = _text2;
+			_button2.x = 500;
+			_button2.y = 300;
+			addChild(_button2);
+			
 			//마우스 클릭을 떼는 시점을 구별하기위해 이벤트 리스너에 등록
 			stage.addEventListener(MouseEvent.MOUSE_UP, onButtonMouseUp);
 		}
@@ -86,23 +103,34 @@ package
 		 *  마우스 업 이벤트 콜백 메소드
 		 */
 		public function onButtonMouseUp(e:MouseEvent):void
-		{
-			var select:int;
+		{			
 			//마우스 클릭을 떼는 시점에 타겟이 버튼0이면 내부적으로 변수 값을 0으로 하고, 이후에 있을 makeSpriteSheet 메소드에 매개변수로 넘겨준다. (버튼1이면 1을 넘겨줌)
 			switch(e.target)
 			{
-				case _button0 :
-					select = 0;					
+				case _button0 :					
+					makeSpriteSheet(0);
 					break;
 				
 				case _button1 :
-					select = 1;					
+					makeSpriteSheet(1);				
 					break;
+				case _button2 :
+				{
+					_isReSizing = !_isReSizing;
+					if(_isReSizing)
+						_text2.text = "No Resizing";
+					else
+						_text2.text = "Resizing";
+					_button2.upState = _text2;
+					_button2.overState = _text2;
+					_button2.hitTestState = _text2;
+					break;
+				}
 			}
 			
-			makeSpriteSheet(select);
+			
 			//프로그램 전체에서 클릭이벤트는 한번만 있기 때문에 바로 리무브
-			stage.removeEventListener(MouseEvent.MOUSE_UP, onButtonMouseUp);
+			//stage.removeEventListener(MouseEvent.MOUSE_UP, onButtonMouseUp);
 		}
 		
 		/**
@@ -127,6 +155,11 @@ package
 						break;
 				
 				}
+				if(_isReSizing)
+				{
+					bitmap.bitmapData = Resizer.cutCanvas(bitmap.bitmapData);
+				}
+				
 				addChild(bitmap);
 								
 				saveToPNG(bitmap);	
