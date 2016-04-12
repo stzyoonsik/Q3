@@ -26,10 +26,10 @@ package
 		private var _fileStream:FileStream = new FileStream(); 			//파일스트림 객체
 		
 		private var _button0:SimpleButton;								//알고리즘 선택 버튼
-		private var _button1:SimpleButton = new SimpleButton();			//알고리즘 선택 버튼		
-		private var _button2:SimpleButton = new SimpleButton();			//이미지 보기 버튼
-		private var _button3:SimpleButton = new SimpleButton();			//이전 버튼
-		private var _button4:SimpleButton = new SimpleButton();			//다음 버튼
+		private var _button1:SimpleButton;								//알고리즘 선택 버튼		
+		private var _button2:SimpleButton;								//이미지 보기 버튼
+		private var _button3:SimpleButton;								//이전 버튼
+		private var _button4:SimpleButton;								//다음 버튼
 		private var _currentPage:int;
 		private var _pageNum:TextField = new TextField();
 		
@@ -61,11 +61,11 @@ package
 			_loadingText.autoSize = "left";
 			addChild(_loadingText);
 			
-			_button0 = createButton("Shelf", 100, 0);
-			_button1 = createButton("Max Rects", 200, 0);
-			_button2 = createButton("이미지 보기", 300, 0);
-			_button3 = createButton("이전", 500, 0);
-			_button4 = createButton("다음", 600, 0);			
+			_button0 = createButton("Shelf", 100, 0, 0xFFFFFF);
+			_button1 = createButton("Max Rects", 200, 0, 0xFFFFFF);
+			_button2 = createButton("이미지 보기", 300, 0, 0xAA00FF);
+			_button3 = createButton("이전", 500, 0, 0x11AAFF);
+			_button4 = createButton("다음", 600, 0, 0x11AAFF);			
 		
 			
 			_pageNum.x = 700;
@@ -85,12 +85,14 @@ package
 		 * @return 버튼
 		 * SimpleButton을 세팅한 후 리턴하는 메소드
 		 */
-		public function createButton(text:String, x:int, y:int):SimpleButton
+		public function createButton(text:String, x:int, y:int, bgcolor:uint):SimpleButton
 		{			
 			var name:TextField = new TextField();
 			name.text = text;
 			name.autoSize = "left";
 			name.border = true;
+			name.background = true;
+			name.backgroundColor = bgcolor;
 			
 			var button:SimpleButton = new SimpleButton();
 			button.upState = name;			
