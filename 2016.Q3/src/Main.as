@@ -11,7 +11,7 @@ package
 	import flash.utils.ByteArray;
 	
 	
-	[SWF(width = "1024", height = "1024")]
+	[SWF(width = "1024", height = "1050")]
 	
 	
 	public class Main extends Sprite
@@ -31,9 +31,16 @@ package
 		private var _text2:TextField = new TextField();
 		private var _isReSizing:Boolean;
 		
+		private var _button3:SimpleButton = new SimpleButton();			//이전 버튼
+		private var _button4:SimpleButton = new SimpleButton();			//다음 버튼
+		private var _currentPage:int;
+		private var _pageNum:TextField = new TextField();
+		
 		private var _finalArray:Array = new Array();					//최종적으로 만들어지는 배열
 		
 		private var _loadingText:TextField = new TextField();			//이미지 로딩의 진행을 알려주는 텍스트필드
+		
+		private var _showArray:Array = new Array();
 		
 		
 		public function Main()
@@ -65,8 +72,8 @@ package
 			_button0.upState = text0;			
 			_button0.overState = text0;
 			_button0.hitTestState = text0;
-			_button0.x = 300;
-			_button0.y = 300;
+			_button0.x = 100;
+			_button0.y = 0;
 			addChild(_button0);
 			
 			//버튼1 (MaxRect)
@@ -77,21 +84,49 @@ package
 			_button1.upState = text1;
 			_button1.overState = text1;
 			_button1.hitTestState = text1;
-			_button1.x = 400;
-			_button1.y = 300;
+			_button1.x = 200;
+			_button1.y = 0;
 			addChild(_button1);
 			
-			//버튼2 (리사이징)
-			 
+			//버튼2 (리사이징)			 
 			_text2.text = "Resizing";
 			_text2.autoSize = "left";
 			_text2.border = true;			
 			_button2.upState = _text2;
 			_button2.overState = _text2;
 			_button2.hitTestState = _text2;
-			_button2.x = 500;
-			_button2.y = 300;
+			_button2.x = 0;
+			_button2.y = 0;
 			addChild(_button2);
+			
+			//이전 버튼
+			var text3:TextField = new TextField();
+			text3.text = "이전";
+			text3.autoSize = "left";
+			text3.border = true;
+			_button3.upState = text3;			
+			_button3.overState = text3;
+			_button3.hitTestState = text3;
+			_button3.x = 500;
+			_button3.y = 0;
+			addChild(_button3);
+			
+			//다음 버튼
+			var text4:TextField = new TextField();
+			text4.text = "다음";
+			text4.autoSize = "left";
+			text4.border = true;
+			_button4.upState = text4;			
+			_button4.overState = text4;
+			_button4.hitTestState = text4;
+			_button4.x = 600;
+			_button4.y = 0;
+			addChild(_button4);
+			
+			_pageNum.x = 700;
+			_pageNum.y = 0;
+			addChild(_pageNum);
+			
 			
 			//마우스 클릭을 떼는 시점을 구별하기위해 이벤트 리스너에 등록
 			stage.addEventListener(MouseEvent.MOUSE_UP, onButtonMouseUp);
@@ -114,6 +149,7 @@ package
 				case _button1 :
 					makeSpriteSheet(1);				
 					break;
+				//버튼2는 체크박스와 같은 기능을 함
 				case _button2 :
 				{
 					_isReSizing = !_isReSizing;
@@ -126,6 +162,32 @@ package
 					_button2.hitTestState = _text2;
 					break;
 				}
+				case _button3 :					
+					if(_currentPage > 0)
+						_currentPage--;
+					_pageNum.text = _currentPage.toString();
+					for(var i:int = 0; i<_showArray.length; ++i)
+					{
+						_showArray[i].visible = false;
+					}
+					if(_showArray[_currentPage] != null)
+						_showArray[_currentPage].visible = true;
+					
+					break;
+				
+				case _button4 :
+					//stage.removeChild(_showArray[_currentPage]);
+					
+					_currentPage++;
+					_pageNum.text = _currentPage.toString();
+					for(var i:int = 0; i<_showArray.length; ++i)
+					{
+						_showArray[i].visible = false;
+					}
+					if(_showArray[_currentPage] != null)
+						_showArray[_currentPage].visible = true;
+					
+					break;
 			}
 			
 			
@@ -140,6 +202,7 @@ package
 		 */
 		public function makeSpriteSheet(select:int):void
 		{
+			_loadingText.text = "더 이상 존재하지 않습니다.";
 			while(_packer.packedImageCount == 0)
 			{
 				var bitmap:Bitmap;
@@ -159,8 +222,10 @@ package
 				{
 					bitmap.bitmapData = Resizer.cutCanvas(bitmap.bitmapData);
 				}
-				
+				bitmap.y = 26;
+				_showArray.push(bitmap);
 				addChild(bitmap);
+				
 								
 				saveToPNG(bitmap);	
 								
@@ -172,7 +237,10 @@ package
 					trace("추가");
 					_count++;
 					_finalArray = _packer.unpackedImageArray;
-					_packer = new Packer();		
+					_packer = new Packer();	
+					
+					_currentPage++;
+					_pageNum.text = _currentPage.toString();
 					
 				}				
 			}
@@ -190,8 +258,7 @@ package
 			if(_loadResource.imageDataArray.length / _loadResource.fileCount != 1)
 				_loadingText.text = (_loadResource.imageDataArray.length / _loadResource.fileCount * 100).toFixed(1);
 			else if(_loadResource.imageDataArray.length / _loadResource.fileCount == 1)
-				_loadingText.text = "이미지 로딩 완료\n" +
-					"알고리즘을 선택하세요";
+				_loadingText.text = "이미지 로딩 완료. 알고리즘을 선택하세요";
 			else
 				_loadingText.text = "이미지 로딩 실패";
 				

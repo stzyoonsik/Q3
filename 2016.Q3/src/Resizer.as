@@ -17,8 +17,6 @@ package
 		 */
 		public static function cutCanvas(canvas:BitmapData):BitmapData
 		{
-			
-			
 			var newWidth:int = 0;
 			var newHeight:int = 0;
 			
@@ -120,6 +118,8 @@ package
 			{
 				newHeight = 256;
 			}
+			
+			
 			
 			
 			return newHeight;
