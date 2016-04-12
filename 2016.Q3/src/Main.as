@@ -1,6 +1,7 @@
 package
 {
 	import flash.display.Bitmap;
+	import flash.display.BitmapData;
 	import flash.display.SimpleButton;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
@@ -24,23 +25,19 @@ package
 	
 		private var _fileStream:FileStream = new FileStream(); 			//파일스트림 객체
 		
-		private var _button0:SimpleButton;			//알고리즘 선택 버튼
-		private var _button1:SimpleButton = new SimpleButton();			//알고리즘 선택 버튼
-		
-		private var _button2:SimpleButton = new SimpleButton();			//리사이징 선택 버튼
-		private var _text2:TextField = new TextField();
-		private var _isReSizing:Boolean;
-		
+		private var _button0:SimpleButton;								//알고리즘 선택 버튼
+		private var _button1:SimpleButton = new SimpleButton();			//알고리즘 선택 버튼		
+		private var _button2:SimpleButton = new SimpleButton();			//이미지 보기 버튼
 		private var _button3:SimpleButton = new SimpleButton();			//이전 버튼
 		private var _button4:SimpleButton = new SimpleButton();			//다음 버튼
 		private var _currentPage:int;
 		private var _pageNum:TextField = new TextField();
 		
-		private var _finalArray:Array = new Array();					//최종적으로 만들어지는 배열
+		private var _loadedImageArray:Array = new Array();				//최종적으로 만들어지는 배열
 		
 		private var _loadingText:TextField = new TextField();			//이미지 로딩의 진행을 알려주는 텍스트필드
 		
-		private var _showArray:Array = new Array();
+		private var _showArray:Array = new Array();						//stage에 보여주기 위한 배열
 		
 		
 		public function Main()
@@ -66,7 +63,7 @@ package
 			
 			_button0 = createButton("Shelf", 100, 0);
 			_button1 = createButton("Max Rects", 200, 0);
-			_button2 = createButton("Resizing", 0, 0);
+			_button2 = createButton("이미지 보기", 300, 0);
 			_button3 = createButton("이전", 500, 0);
 			_button4 = createButton("다음", 600, 0);			
 		
@@ -89,12 +86,13 @@ package
 		 * SimpleButton을 세팅한 후 리턴하는 메소드
 		 */
 		public function createButton(text:String, x:int, y:int):SimpleButton
-		{
-			var button:SimpleButton = new SimpleButton();
+		{			
 			var name:TextField = new TextField();
 			name.text = text;
 			name.autoSize = "left";
 			name.border = true;
+			
+			var button:SimpleButton = new SimpleButton();
 			button.upState = name;			
 			button.overState = name;
 			button.hitTestState = name;
@@ -111,35 +109,32 @@ package
 		 *  마우스 업 이벤트 콜백 메소드
 		 */
 		public function onButtonMouseUp(e:MouseEvent):void
-		{			
+		{		
+			var i:int;
 			//마우스 클릭을 떼는 시점에 타겟이 버튼0이면 내부적으로 변수 값을 0으로 하고, 이후에 있을 makeSpriteSheet 메소드에 매개변수로 넘겨준다. (버튼1이면 1을 넘겨줌)
 			switch(e.target)
 			{
 				case _button0 :					
+					_loadingText.text = "";
 					makeSpriteSheet(0);
 					break;
 				
 				case _button1 :
+					_loadingText.text = "";
 					makeSpriteSheet(1);				
 					break;
-				//버튼2는 체크박스와 같은 기능을 함
+				//버튼2는 이미지 보기/안보기
 				case _button2 :
 				{
-					_isReSizing = !_isReSizing;
-					if(_isReSizing)
-						_text2.text = "No Resizing";
-					else
-						_text2.text = "Resizing";
-					_button2.upState = _text2;
-					_button2.overState = _text2;
-					_button2.hitTestState = _text2;
+					if(_showArray[_currentPage] != null)
+						_showArray[_currentPage].visible = !_showArray[_currentPage].visible;
 					break;
 				}
 				case _button3 :					
 					if(_currentPage > 0)
 						_currentPage--;
 					_pageNum.text = _currentPage.toString();
-					for(var i:int = 0; i<_showArray.length; ++i)
+					for(i = 0; i<_showArray.length; ++i)
 					{
 						_showArray[i].visible = false;
 					}
@@ -149,11 +144,10 @@ package
 					break;
 				
 				case _button4 :
-					//stage.removeChild(_showArray[_currentPage]);
 					
 					_currentPage++;
 					_pageNum.text = _currentPage.toString();
-					for(var i:int = 0; i<_showArray.length; ++i)
+					for(i = 0; i<_showArray.length; ++i)
 					{
 						_showArray[i].visible = false;
 					}
@@ -164,9 +158,9 @@ package
 			}
 			
 			
-			//프로그램 전체에서 클릭이벤트는 한번만 있기 때문에 바로 리무브
-			//stage.removeEventListener(MouseEvent.MOUSE_UP, onButtonMouseUp);
 		}
+		
+
 		
 		/**
 		 * 
@@ -175,50 +169,81 @@ package
 		 */
 		public function makeSpriteSheet(select:int):void
 		{
-			_loadingText.text = "더 이상 존재하지 않습니다.";
+			
 			while(_packer.packedImageCount == 0)
 			{
-				var bitmap:Bitmap;
+				
 				switch(select)
 				{
 					//높이 우선 알고리즘
 					case 0:  
-						bitmap = _packer.mergeImageByShelf(_finalArray);
+						_packer.mergeImageByShelf(_loadedImageArray);
 						break;
 					//Max Rects 알고리즘
 					case 1:
-						bitmap = _packer.mergeImageByMaxRects(_finalArray);
+						_packer.mergeImageByMaxRects(_loadedImageArray);
 						break;
-				
+					
 				}
-				if(_isReSizing)
+				
+				var spr:Sprite = new Sprite();
+				for(var i:int = 0; i<_packer.packedImageArray.length; ++i)
 				{
-					bitmap.bitmapData = Resizer.cutCanvas(bitmap.bitmapData);
+					var bitmap:Bitmap = new Bitmap(_packer.packedImageArray[i].bitmapData);
+					bitmap.x = _packer.packedImageArray[i].rect.x;
+					bitmap.y = _packer.packedImageArray[i].rect.y;
+					spr.addChild(bitmap);
 				}
-				bitmap.y = 26;
-				_showArray.push(bitmap);
-				addChild(bitmap);
 				
-								
-				saveToPNG(bitmap);	
-								
-				exportToXML(_packer.forXMLArray);
+				spr.y = 26;
+				_showArray.push(spr);
+				
+				addChild(spr);
+				spr.visible = false;
+				
+				trace("spr.width = " + spr.width);
+				trace("spr.height = " + spr.height);
+				
+				var bm:BitmapData = new BitmapData(getCorrectLength(spr.width), getCorrectLength(spr.height));
+				bm.draw(spr,null,null,null, getBounds(spr), false);
+				saveToPNG(new Bitmap(bm));	
+				
+				exportToXML(_packer.packedImageArray);
 				
 				//시트에 옴겨지지 못하고 남은 이미지가 존재한다면
 				if(_packer.unpackedImageArray.length != 0)
 				{
 					trace("추가");
 					_count++;
-					_finalArray = _packer.unpackedImageArray;
+					_loadedImageArray = _packer.unpackedImageArray;
 					_packer = new Packer();	
 					
 					_currentPage++;
 					_pageNum.text = _currentPage.toString();
 					
 				}				
-			}
+			}			
 		}
 		
+		/**
+		 * 
+		 * @param size 받아오는 사이즈
+		 * @return size보다 큰 최소의 2의n승 
+		 * 
+		 */
+		public function getCorrectLength(size:int):int
+		{
+			var newSize:int = 1;
+			
+			while(newSize < size)
+			{
+				newSize *= 2;
+			}
+			
+			return newSize;
+		}
+		
+
 		/**
 		 * 모든 리소스의 로딩이 끝났는지를 검사하는 메소드
 		 * 다 끝났다면 새 배열로 복사함
@@ -238,7 +263,7 @@ package
 			//모두 로딩이 됬다면
 			if(_loadResource.imageDataArray.length == _loadResource.fileCount)
 			{	
-				_finalArray = _loadResource.imageDataArray;
+				_loadedImageArray = _loadResource.imageDataArray;
 
 			}
 		}

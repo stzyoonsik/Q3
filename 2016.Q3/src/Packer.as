@@ -1,7 +1,5 @@
 package
 {
-	import flash.display.Bitmap;
-	import flash.display.BitmapData;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 
@@ -10,16 +8,13 @@ package
 		private const MAX_WIDTH:int = 1024;
 		private const MAX_HEIGHT:int = 1024;
 		private const BGCOLOR:uint = 0xAAAAAA;
-		private var _forXMLArray:Array = new Array();					//xml에 쓸 데이터 배열
+		private var _packedImageArray:Array = new Array();					//xml에 쓸 데이터 배열
 		
 		private var _unpackedImageArray:Array = new Array();			//패킹되지 못한 이미지 파일들이 담긴 배열
 		
 		private var _packedImageCount:int;
 		
-		public function Packer()
-		{
-			
-		}		
+	
 
 
 		public function get packedImageCount():int
@@ -42,33 +37,27 @@ package
 			_unpackedImageArray = value;
 		}
 
-		public function get forXMLArray():Array
+		public function get packedImageArray():Array
 		{
-			return _forXMLArray;
+			return _packedImageArray;
 		}
 
-		public function set forXMLArray(value:Array):void
+		public function set packedImageArray(value:Array):void
 		{
-			_forXMLArray = value;
+			_packedImageArray = value;
 		}
 
 		
-		
+
 		/**
 		 * 
 		 * @param imageArray 이미지가 들어있는 Array를 받아옴
 		 * @return 새 Bitmap에 이미지를 넣고 리턴
 		 * 하나의 큰 도화지에 이미지들을 MaxRects 알고리즘을 기반으로 넣어주는 메소드
 		 */
-		public function mergeImageByMaxRects(imageArray:Array):Bitmap
+		public function mergeImageByMaxRects(imageArray:Array):void
 		{
-			var canvas:BitmapData = new BitmapData(MAX_WIDTH, MAX_HEIGHT, false);
-			var tempRect:Rectangle = new Rectangle(0, 0, MAX_WIDTH, MAX_HEIGHT);
-			canvas.fillRect(tempRect, BGCOLOR);
-			
-			
-			
-			var mult:uint = 0xFF;			
+		
 			
 			var maxRect:MaxRectPacker = new MaxRectPacker(MAX_WIDTH, MAX_HEIGHT);
 			
@@ -86,39 +75,22 @@ package
 					continue;
 				}
 				
-				var point:Point = new Point(rect.x, rect.y);
-				canvas.merge(imageArray[i].bitmapData, imageArray[i].bitmapData.rect, point, mult, mult, mult, mult);
 				
 				var imageData:ImageData = new ImageData();
+				imageData.bitmapData = imageArray[i].bitmapData;
 				imageData.name = imageArray[i].name;
-				imageData.rect.x = point.x;
-				imageData.rect.y = point.y;
+				imageData.rect.x = rect.x;
+				imageData.rect.y = rect.y;
 				imageData.rect.width = imageArray[i].bitmapData.width;
 				imageData.rect.height = imageArray[i].bitmapData.height;
-				_forXMLArray.push(imageData);
+				_packedImageArray.push(imageData);
 				
 				_packedImageCount++;
+				
+				
 			}
-			
-			
-			
-//			for(var j:int = 0; j<_forXMLArray.length; ++j)
-//			{
-//				trace(_forXMLArray[j].name + "\t" +  _forXMLArray[j].rect);
-//			}
-			trace(imageArray.length + "개의 이미지 중 " + _forXMLArray.length + "개의 이미지 패킹 완료");
-			
-//			for(var k:int = 0; k<_unpackedImageArray.length; ++k)
-//			{
-//				trace(_unpackedImageArray[k].name + "\t" +  _unpackedImageArray[k].rect);
-//			}
-			trace(_unpackedImageArray.length + "개의 이미지 패킹 실패");
-			
-			
-			return new Bitmap(canvas);
 		}
-		
-		
+
 		
 		/**
 		 * 
@@ -126,16 +98,9 @@ package
 		 * @return 새 Bitmap에 이미지를 넣고 리턴
 		 * 하나의 큰 도화지에 이미지들을 Height를 기준으로 내림차순으로 넣어주는 메소드		 * 
 		 */
-		public function mergeImageByShelf(imageArray:Array):Bitmap
+		public function mergeImageByShelf(imageArray:Array):void
 		{
-			var canvas:BitmapData = new BitmapData(MAX_WIDTH, MAX_HEIGHT, false);
-			var rect:Rectangle = new Rectangle(0, 0, MAX_WIDTH, MAX_HEIGHT);
-			canvas.fillRect(rect, 0xAAAAAA);
-			
-			
-			var bm:Bitmap;
 			var point:Point = new Point(0,0);
-			var mult:uint = 0xFF;					 // 알파값 조정 없이 100%로 이용 
 			
 			var newLine:Boolean = true;
 			var tempHeight:int;
@@ -147,8 +112,7 @@ package
 			
 			
 			for(var i:int = 0; i<imageArray.length; ++i)
-			{				
-				bm = new Bitmap(imageArray[i].bitmapData);				
+			{								
 				
 				if(isFull)
 				{
@@ -204,25 +168,25 @@ package
 				}
 				
 				//큰 도화지에 하나씩 붙여넣음
-				canvas.merge(bm.bitmapData, bm.bitmapData.rect, point, mult, mult, mult, mult);
 				
-				//xml로 쓸 데이터를 array에 저장
+				
 				var imageData:ImageData = new ImageData();
+				imageData.bitmapData = imageArray[i].bitmapData;
 				imageData.name = imageArray[i].name;
 				imageData.rect.x = point.x;
 				imageData.rect.y = point.y;
 				imageData.rect.width = imageArray[i].bitmapData.width;
 				imageData.rect.height = imageArray[i].bitmapData.height;
-				_forXMLArray.push(imageData);								
+				_packedImageArray.push(imageData);						
 				
 				_packedImageCount++;
 			}
 			
 			trace(_unpackedImageArray.length + "개의 이미지 패킹 실패");
-			trace(imageArray.length + "개의 이미지 중 " + _forXMLArray.length + "개의 이미지 패킹 완료");
+			trace(imageArray.length + "개의 이미지 중 " + _packedImageArray.length + "개의 이미지 패킹 완료");
 			
 			
-			return new Bitmap(canvas);
+			
 		}
 		
 		
