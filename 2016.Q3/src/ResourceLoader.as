@@ -1,5 +1,6 @@
 package
 {
+	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.Loader;
 	import flash.display.LoaderInfo;
@@ -75,9 +76,10 @@ package
 			var imageData:ImageData = new ImageData();
 			imageData.name = name;
 			
-			var _bitmapData:BitmapData = new BitmapData(loaderInfo.width, loaderInfo.height);			
-			_bitmapData.draw(loaderInfo.loader);
-			imageData.bitmapData = _bitmapData;
+			//var _bitmapData:BitmapData = new BitmapData(loaderInfo.width, loaderInfo.height);			
+			//_bitmapData.draw(loaderInfo.loader);
+			var bitmap:Bitmap = loaderInfo.content as Bitmap;
+			imageData.bitmapData = bitmap.bitmapData;
 			
 			_imageDataArray.push(imageData);
 			

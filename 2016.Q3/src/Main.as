@@ -2,12 +2,15 @@ package
 {
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
+	import flash.display.PNGEncoderOptions;
 	import flash.display.SimpleButton;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 	import flash.filesystem.File;
 	import flash.filesystem.FileMode;
 	import flash.filesystem.FileStream;
+	import flash.geom.Point;
+	import flash.geom.Rectangle;
 	import flash.text.TextField;
 	import flash.utils.ByteArray;
 	
@@ -189,14 +192,19 @@ package
 				}
 				
 				var spr:Sprite = new Sprite();
+				
+				var bmd:BitmapData = new BitmapData(1024, 1024);
 				for(var i:int = 0; i<_packer.packedImageArray.length; ++i)
 				{
 					var bitmap:Bitmap = new Bitmap(_packer.packedImageArray[i].bitmapData);
 					bitmap.x = _packer.packedImageArray[i].rect.x;
 					bitmap.y = _packer.packedImageArray[i].rect.y;
 					spr.addChild(bitmap);
+					var rect:Rectangle = new Rectangle(0, 0, bitmap.bitmapData.width, bitmap.bitmapData.height);
+					bmd.merge(bitmap.bitmapData, rect, new Point(bitmap.x, bitmap.y), 0xFF, 0xFF, 0xFF, 0xFF);
 				}
 				
+				//bmwidth = getCorrectLength(bm.width);
 				spr.y = 26;
 				_showArray.push(spr);
 				
@@ -205,10 +213,13 @@ package
 				
 				trace("spr.width = " + spr.width);
 				trace("spr.height = " + spr.height);
+								
 				
-				var bm:BitmapData = new BitmapData(getCorrectLength(spr.width), getCorrectLength(spr.height));
-				bm.draw(spr,null,null,null, getBounds(spr), false);
-				saveToPNG(new Bitmap(bm));	
+				var bm:Bitmap = new Bitmap(bmd);
+				bm.width = getCorrectLength(spr.width);
+				bm.height = getCorrectLength(spr.height);
+				
+				saveToPNG(bm);
 				
 				exportToXML(_packer.packedImageArray);
 				
@@ -279,8 +290,9 @@ package
 		{
 			//내문서에 저장됨
 			var _pngFile:File = File.documentsDirectory.resolvePath("sprite_sheet" + _count + ".png");
-			var byteArray:ByteArray = PNGEncoder.encode(bitmap.bitmapData);
-			
+			//var byteArray:ByteArray = PNGEncoder.encode(bitmap.bitmapData);
+			var byteArray:ByteArray = new ByteArray();
+			bitmap.bitmapData.encode(new Rectangle(0, 0, bitmap.width, bitmap.height), new PNGEncoderOptions(), byteArray);
 			_fileStream.open(_pngFile, FileMode.WRITE);
 			_fileStream.writeBytes(byteArray);
 			_fileStream.close();
@@ -298,6 +310,7 @@ package
 			_fileStream.open(_xmlFile, FileMode.WRITE);
 			_fileStream.writeUTFBytes("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 			_fileStream.writeUTFBytes("<TextureAtlas ImagePath=\"" + "sprite_sheet" + _count + ".png" + "\">\n");
+			
 			
 			for(var i:int = 0; i<imageData.length; ++i)
 			{

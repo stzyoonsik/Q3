@@ -62,7 +62,10 @@ package
 			var maxRect:MaxRectPacker = new MaxRectPacker(MAX_WIDTH, MAX_HEIGHT);
 			
 			//면적 기준 내림차순 정렬
-			imageArray.sort(compareAreaDescending);
+			//imageArray.sort(compareAreaDescending);
+			
+			//이름 기준 정렬
+			imageArray.sort(compareName);
 			
 			for(var i:int = 0; i<imageArray.length; ++i)
 			{	
@@ -108,8 +111,8 @@ package
 			var isFull:Boolean;
 			
 			//이미지의 height를 기준으로 내림차순 정렬
-			imageArray.sort(compareHeightDescending);
-			
+			//imageArray.sort(compareHeightDescending);
+			imageArray.sort(compareName);
 			
 			for(var i:int = 0; i<imageArray.length; ++i)
 			{								
@@ -139,7 +142,7 @@ package
 				if(i > 0)
 				{
 					//도화지의 가로 길이를 벗어나지 않으면
-					if(point.x + imageArray[i-1].bitmapData.width + imageArray[i].bitmapData.width < MAX_WIDTH)
+					if(point.x + imageArray[i-1].bitmapData.width + imageArray[i].bitmapData.width <= MAX_WIDTH)
 					{
 						point.x += imageArray[i-1].bitmapData.width;
 					}
@@ -262,6 +265,33 @@ package
 				return -1; 
 			} 
 			else if (bArea > aArea) 
+			{ 
+				return 1; 
+			} 
+			else 
+			{ 
+				return 0; 
+			} 
+		}
+		
+		/**
+		 * 
+		 * @param a 이미지의 데이터
+		 * @param b 이미지의 데이터
+		 * @return  
+		 * 내림차순
+		 */
+		public function compareName(a, b):int
+		{
+			//var aName:int = a.bitmapData.height * a.bitmapData.width;
+			//var bName:int = b.bitmapData.height * b.bitmapData.width;
+			
+			
+			if (b.name > a.name) 
+			{ 
+				return -1; 
+			} 
+			else if (b.name < a.name) 
 			{ 
 				return 1; 
 			} 
