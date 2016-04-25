@@ -68,7 +68,7 @@ package
 			_button1 = createButton("Max Rects", 200, 0, 0xFFFFFF);
 			_button2 = createButton("이미지 보기", 300, 0, 0xAA00FF);
 			_button3 = createButton("이전", 400, 0, 0x11AAFF);
-			_button4 = createButton("다음", 500, 0, 0x11AAFF);			
+			_button4 = createButton("다음", 500, 0, 0x11AAFF);		
 		
 			
 			_pageNum.x = 450;

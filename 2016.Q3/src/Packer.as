@@ -112,7 +112,7 @@ package
 			
 			//이미지의 height를 기준으로 내림차순 정렬
 			//imageArray.sort(compareHeightDescending);
-			imageArray.sort(compareName);
+			imageArray.sort(compareHeightDescending);
 			
 			for(var i:int = 0; i<imageArray.length; ++i)
 			{								
