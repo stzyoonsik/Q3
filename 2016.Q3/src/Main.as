@@ -28,11 +28,11 @@ package
 	
 		private var _fileStream:FileStream = new FileStream(); 			//파일스트림 객체
 		
-		private var _button0:SimpleButton;								//알고리즘 선택 버튼
-		private var _button1:SimpleButton;								//알고리즘 선택 버튼		
-		private var _button2:SimpleButton;								//이미지 보기 버튼
-		private var _button3:SimpleButton;								//이전 버튼
-		private var _button4:SimpleButton;								//다음 버튼
+		private var _shelfButton:SimpleButton;								//알고리즘 선택 버튼
+		private var _maxRectButton:SimpleButton;								//알고리즘 선택 버튼		
+		private var _viewButton:SimpleButton;								//이미지 보기 버튼
+		private var _prevButton:SimpleButton;								//이전 버튼
+		private var _nextButton:SimpleButton;								//다음 버튼
 		private var _currentPage:int;
 		private var _pageNum:TextField = new TextField();
 		
@@ -64,11 +64,11 @@ package
 			_loadingText.autoSize = "left";
 			addChild(_loadingText);
 			
-			_button0 = createButton("Shelf", 100, 0, 0xFFFFFF);
-			_button1 = createButton("Max Rects", 200, 0, 0xFFFFFF);
-			_button2 = createButton("이미지 보기", 300, 0, 0xAA00FF);
-			_button3 = createButton("이전", 400, 0, 0x11AAFF);
-			_button4 = createButton("다음", 500, 0, 0x11AAFF);		
+			_shelfButton = createButton("Shelf", 100, 0, 0xFFFFFF);
+			_maxRectButton = createButton("Max Rects", 200, 0, 0xFFFFFF);
+			_viewButton = createButton("이미지 보기", 300, 0, 0xAA00FF);
+			_prevButton = createButton("이전", 400, 0, 0x11AAFF);
+			_nextButton = createButton("다음", 500, 0, 0x11AAFF);		
 		
 			
 			_pageNum.x = 450;
@@ -121,24 +121,24 @@ package
 			//마우스 클릭을 떼는 시점에 타겟이 버튼0이면 내부적으로 변수 값을 0으로 하고, 이후에 있을 makeSpriteSheet 메소드에 매개변수로 넘겨준다. (버튼1이면 1을 넘겨줌)
 			switch(e.target)
 			{
-				case _button0 :					
+				case _shelfButton :					
 					_loadingText.text = "패킹 완료. 이미지 보기를 클릭하세요.";
 					makeSpriteSheet(0);
 					break;
 				
-				case _button1 :
+				case _maxRectButton :
 					_loadingText.text = "패킹 완료. 이미지 보기를 클릭하세요.";
 					makeSpriteSheet(1);				
 					break;
 				//버튼2는 이미지 보기/안보기
-				case _button2 :
+				case _viewButton :
 				{
 					if(_showArray[_currentPage] != null)
 						_showArray[_currentPage].visible = !_showArray[_currentPage].visible;
 					break;
 				}
 					
-				case _button3 :					
+				case _prevButton :					
 					if(_currentPage > 0)
 						_currentPage--;
 					_pageNum.text = _currentPage.toString();
@@ -151,7 +151,7 @@ package
 					
 					break;
 				
-				case _button4 :					
+				case _nextButton :					
 					_currentPage++;
 					_pageNum.text = _currentPage.toString();
 					for(i = 0; i<_showArray.length; ++i)
